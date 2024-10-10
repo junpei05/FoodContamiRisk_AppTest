@@ -1,4 +1,4 @@
 # FoodContamiRisk_AppTest
 
-[](https://github.com/kento-koyama/food_micro_data_risk) のデータ可視化アプリのページです
+[食中毒細菌に関するばく露評価のDX化に向けた情報整理](https://github.com/kento-koyama/food_micro_data_risk) のデータ可視化アプリのページです
 - 細江がプロトタイプを仮置きする用に作成しました
