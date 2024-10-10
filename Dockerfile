@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN apt-get update && \
     apt-get -y upgrade && \
     pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install -r requirement.txt
 
 EXPOSE 8501
 
