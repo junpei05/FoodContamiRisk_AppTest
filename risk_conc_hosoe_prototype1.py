@@ -88,27 +88,6 @@ def filter_and_display_data(selected_group, selected_food):
     plt.grid(True)
     st.pyplot(fig)
 
-    # フィルタリングされたデータを表示
-    st.subheader('サルモネラの汚染濃度（すべての食品）')
-    df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.cointains('Salmonella')]
-    df_Salmonella_counts = df_Salmonella_counts.iloc[:,[0,8,9,6]]
-    df_Salmonella_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品詳細']
-    st.dataframe(df_Salmonella_counts)
-
-    # 汚染濃度の分布をヒストグラムで可視化（刻み幅1）
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.hist(df_Salmonella_counts['汚染濃度'].astype(float), bins=range(int(df_Salmonella_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-    ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-    ax.set_ylabel('頻度', fontsize=18)
-    ax.set_title('汚染濃度の分布', fontsize=20)
-    ax.tick_params(axis='both', which='major', labelsize=14)
-    plt.grid(True)
-    st.pyplot(fig)
-
-    # 選択された食品カテゴリと食品名に該当するデータ（すべての食品カテゴリと食品名）の表示
-    st.subheader('選択された食品カテゴリと食品名に該当するデータ （すべての食品カテゴリと食品名）')
-    st.dataframe(df_filtered)
-
 
 # 選択されたフィルターを使用してデータを表示
 filter_and_display_data(selected_group, selected_food)
