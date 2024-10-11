@@ -88,6 +88,7 @@ def filter_and_display_data(selected_group, selected_food):
     ax.tick_params(axis='both', which='major', labelsize=14)
     plt.grid(True)
     st.pyplot(fig)
+    st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
 
     # フィルタリングされたデータを表示
     st.subheader('サルモネラの汚染濃度（すべての食品）')
