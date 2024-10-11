@@ -88,5 +88,10 @@ def filter_and_display_data(selected_group, selected_food):
     plt.grid(True)
     st.pyplot(fig)
 
+    # 選択された食品カテゴリと食品名に該当するデータ（すべての食品カテゴリと食品名）の表示
+    st.subheader('選択された食品カテゴリと食品名に該当するデータ （すべての食品カテゴリと食品名）')
+    st.dataframe(df_filtered)
+
+
 # 選択されたフィルターを使用してデータを表示
 filter_and_display_data(selected_group, selected_food)
