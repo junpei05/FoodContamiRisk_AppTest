@@ -99,14 +99,14 @@ def filter_and_display_data(selected_group, selected_food):
         st.pyplot(fig)
 
     st.write('-----------')
+    st.subheader('サルモネラの汚染濃度（すべての食品）')
     col5, col6 = st.columns(2)
 
     with col5:
         # フィルタリングされたデータを表示
-        st.subheader('サルモネラの汚染濃度（すべての食品）')
         df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
-        df_Salmonella_counts = df_Salmonella_counts.iloc[:,[0,8,9,6]]
-        df_Salmonella_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品詳細']
+        df_Salmonella_counts = df_Salmonella_counts.iloc[:,[0,8,9,5,6]]
+        df_Salmonella_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
         st.dataframe(df_Salmonella_counts)
     with col6:
         # サルモネラの汚染濃度の分布をヒストグラムで可視化（刻み幅1）
