@@ -48,49 +48,72 @@ else:
 
 selected_food = st.sidebar.selectbox('食品名を選択してください:', ['すべて'] + list(df_filtered['食品名'].unique()))
 
-# データフィルタリングと表示
-def filter_and_display_data(selected_group, selected_food):
-    if selected_group != 'すべて':
-        df_filtered = df[df['食品カテゴリ'] == selected_group]
-    else:
-        df_filtered = df
+# 選択された食品カテゴリと食品名でデータをフィルタリング
+if selected_group != 'すべて':
+    df_filtered = df[df['食品カテゴリ'] == selected_group]
+else:
+    df_filtered = df
 
-    if selected_food != 'すべて':
-        df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
+if selected_food != 'すべて':
+    df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
-    st.subheader('細菌ごとの検体数の合計')
-    col1, col2 = st.columns(2)
+# 細菌ごとの検体数の合計を表示
+st.subheader('細菌ごとの検体数の合計')
+col1, col2 = st.columns(2)
 
-    with col1:
-        # 細菌ごとの検体数と陽性数の合計を計算
-        bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
-        bacteria_samplesize.columns = ['細菌名', '検体数の合計']
-        st.dataframe(bacteria_samplesize)
-    with col2:
-        # 検体数の合計を水平棒グラフで可視化
+with col1:
+    bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
+    bacteria_samplesize.columns = ['細菌名', '検体数の合計']
+    st.dataframe(bacteria_samplesize)
+
+with col2:
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数の合計'], color='skyblue')
+    ax.set_xlabel('検体数の合計', fontsize=14)
+    ax.set_ylabel('細菌名', fontsize=14)
+    ax.set_title('細菌ごとの検体数の合計', fontsize=16)
+    ax.grid(True)
+    st.pyplot(fig)
+
+st.write('-----------')
+
+# すべての細菌の汚染濃度を表示
+st.subheader('すべての細菌の汚染濃度（すべての食品）')
+col3, col4 = st.columns(2)
+
+with col3:
+    df_bacteria_counts = df_filtered.copy()
+    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 9, 6]]
+    df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品詳細']
+    st.dataframe(df_bacteria_counts)
+    st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
+
+with col4:
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.hist(df_filtered['汚染濃度'].astype(float), bins=range(int(df_filtered['汚染濃度'].astype(float).min()), int(df_filtered['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+    ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
+    ax.set_ylabel('頻度', fontsize=18)
+    ax.set_title('汚染濃度の分布', fontsize=20)
+    ax.tick_params(axis='both', which='major', labelsize=14)
+    plt.grid(True)
+    st.pyplot(fig)
+
+st.write('-----------')
+
+# サルモネラのデータがある場合のみ表示
+df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
+if not df_Salmonella_counts.empty:
+    st.subheader('サルモネラの汚染濃度（すべての食品）')
+    col5, col6 = st.columns(2)
+
+    with col5:
+        df_Salmonella_counts = df_Salmonella_counts.iloc[:, [0, 8, 9, 5, 6]]
+        df_Salmonella_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
+        st.dataframe(df_Salmonella_counts)
+
+    with col6:
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数の合計'], color='skyblue')
-        ax.set_xlabel('検体数の合計', fontsize=14)
-        ax.set_ylabel('細菌名', fontsize=14)
-        ax.set_title('細菌ごとの検体数の合計', fontsize=16)
-        ax.grid(True)
-        st.pyplot(fig)
-
-    st.write('-----------')
-    st.subheader('すべての細菌の汚染濃度（すべての食品）')
-    col3, col4 = st.columns(2)
-
-    with col3:
-        # フィルタリングされたデータを表示
-        df_bacteria_counts = df_filtered.copy()
-        df_bacteria_counts = df_bacteria_counts.iloc[:,[0,8,9,6]]
-        df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品詳細']
-        st.dataframe(df_bacteria_counts)
-        st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
-    with col4:
-        # 汚染濃度の分布をヒストグラムで可視化（刻み幅1）
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_filtered['汚染濃度'].astype(float), bins=range(int(df_filtered['汚染濃度'].astype(float).min()), int(df_filtered['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.hist(df_Salmonella_counts['汚染濃度'].astype(float), bins=range(int(df_Salmonella_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
         ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
         ax.set_ylabel('頻度', fontsize=18)
         ax.set_title('汚染濃度の分布', fontsize=20)
@@ -98,35 +121,7 @@ def filter_and_display_data(selected_group, selected_food):
         plt.grid(True)
         st.pyplot(fig)
 
-    st.write('-----------')
-    st.subheader('サルモネラの汚染濃度（すべての食品）')
-    col5, col6 = st.columns(2)
-
-    with col5:
-        # フィルタリングされたデータを表示
-        df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
-        df_Salmonella_counts = df_Salmonella_counts.iloc[:,[0,8,9,5,6]]
-        df_Salmonella_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
-        st.dataframe(df_Salmonella_counts)
-    with col6:
-        # サルモネラの汚染濃度の分布をヒストグラムで可視化（刻み幅1）
-        if not df_Salmonella_counts.empty:
-            fig, ax = plt.subplots(figsize=(8, 6))
-            ax.hist(df_Salmonella_counts['汚染濃度'].astype(float), bins=range(int(df_Salmonella_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-            ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-            ax.set_ylabel('頻度', fontsize=18)
-            ax.set_title('汚染濃度の分布', fontsize=20)
-            ax.tick_params(axis='both', which='major', labelsize=14)
-            plt.grid(True)
-            st.pyplot(fig)
-        else:
-            st.write("サルモネラのデータが存在しないため、ヒストグラムを表示できません。")    
-
-    # 選択された食品カテゴリと食品名に該当するデータ（すべての食品カテゴリと食品名）の表示
-    st.write('-----------')
-    st.subheader('選択された食品カテゴリと食品名に該当するデータ （すべての食品カテゴリと食品名）')
-    st.dataframe(df_filtered)
-
-
-# 選択されたフィルターを使用してデータを表示
-filter_and_display_data(selected_group, selected_food)
+# 選択された食品カテゴリと食品名に該当するデータを表示
+st.write('-----------')
+st.subheader('選択された食品カテゴリと食品名に該当するデータ （すべての食品カテゴリと食品名）')
+st.dataframe(df_filtered)
