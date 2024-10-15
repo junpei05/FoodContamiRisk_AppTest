@@ -58,7 +58,6 @@ def filter_and_display_data(selected_group, selected_food):
     if selected_food != 'すべて':
         df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
-    st.write('-----------')
     col1, col2 = st.columns(2)
 
     with col1:
