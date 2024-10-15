@@ -98,11 +98,76 @@ with col4:
     plt.grid(True)
     st.pyplot(fig)
 
-st.write('-----------')
+# カンピロのデータがある場合のみ表示
+df_Campylobacter_counts = df_filtered[df_filtered['細菌名'].str.contains('Campylobacter')]
+if not df_Campylobacter_counts.empty:
+    st.write('-----------')
+    st.subheader('カンピロバクターの汚染濃度（すべての食品）')
+    col5, col6 = st.columns(2)
+
+    with col5:
+        df_Campylobacter_counts = df_Campylobacter_counts.iloc[:, [0, 8, 9, 5, 6]]
+        df_Campylobacter_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
+        st.dataframe(df_Campylobacter_counts)
+
+    with col6:
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.hist(df_Campylobacter_counts['汚染濃度'].astype(float), bins=range(int(df_Campylobacter_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
+        ax.set_ylabel('頻度', fontsize=18)
+        ax.set_title('汚染濃度の分布', fontsize=20)
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        plt.grid(True)
+        st.pyplot(fig)
+
+# リステリアのデータがある場合のみ表示
+df_Listeria_counts = df_filtered[df_filtered['細菌名'].str.contains('Listeria')]
+if not df_Listeria_counts.empty:
+    st.write('-----------')
+    st.subheader('リステリアの汚染濃度（すべての食品）')
+    col5, col6 = st.columns(2)
+
+    with col5:
+        df_Listeria_counts = df_Listeria_counts.iloc[:, [0, 8, 9, 5, 6]]
+        df_Listeria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
+        st.dataframe(df_Listeria_counts)
+
+    with col6:
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.hist(df_Listeria_counts['汚染濃度'].astype(float), bins=range(int(df_Listeria_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
+        ax.set_ylabel('頻度', fontsize=18)
+        ax.set_title('汚染濃度の分布', fontsize=20)
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        plt.grid(True)
+        st.pyplot(fig)
+
+# 腸管出血性大腸菌のデータがある場合のみ表示
+df_EHEC_counts = df_filtered[df_filtered['細菌名'].str.contains('Escherichia coli')]
+if not df_EHEC_counts.empty:
+    st.write('-----------')
+    st.subheader('腸管出血性大腸菌の汚染濃度（すべての食品）')
+    col5, col6 = st.columns(2)
+
+    with col5:
+        df_EHEC_counts = df_EHEC_counts.iloc[:, [0, 8, 9, 5, 6]]
+        df_EHEC_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
+        st.dataframe(df_EHEC_counts)
+
+    with col6:
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ax.hist(df_EHEC_counts['汚染濃度'].astype(float), bins=range(int(df_EHEC_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
+        ax.set_ylabel('頻度', fontsize=18)
+        ax.set_title('汚染濃度の分布', fontsize=20)
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        plt.grid(True)
+        st.pyplot(fig)
 
 # サルモネラのデータがある場合のみ表示
 df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
 if not df_Salmonella_counts.empty:
+    st.write('-----------')
     st.subheader('サルモネラの汚染濃度（すべての食品）')
     col5, col6 = st.columns(2)
 
