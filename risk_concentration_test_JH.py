@@ -112,7 +112,7 @@ if not df_Campylobacter_counts.empty:
 
     with col6:
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_Campylobacter_counts['汚染濃度'].astype(float), bins=range(int(df_Campylobacter_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.hist(df_Campylobacter_counts['汚染濃度'].astype(float), bins=range(int(df_Campylobacter_counts['汚染濃度'].astype(float).min()), int(df_Campylobacter_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
         ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
         ax.set_ylabel('頻度', fontsize=18)
         ax.set_title('汚染濃度の分布', fontsize=20)
@@ -134,7 +134,7 @@ if not df_Listeria_counts.empty:
 
     with col6:
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_Listeria_counts['汚染濃度'].astype(float), bins=range(int(df_Listeria_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.hist(df_Listeria_counts['汚染濃度'].astype(float), bins=range(int(df_Listeria_counts['汚染濃度'].astype(float).min()), int(df_Listeria_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
         ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
         ax.set_ylabel('頻度', fontsize=18)
         ax.set_title('汚染濃度の分布', fontsize=20)
@@ -156,7 +156,7 @@ if not df_EHEC_counts.empty:
 
     with col6:
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_EHEC_counts['汚染濃度'].astype(float), bins=range(int(df_EHEC_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.hist(df_EHEC_counts['汚染濃度'].astype(float), bins=range(int(df_EHEC_counts['汚染濃度'].astype(float).min()), int(df_EHEC_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
         ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
         ax.set_ylabel('頻度', fontsize=18)
         ax.set_title('汚染濃度の分布', fontsize=20)
