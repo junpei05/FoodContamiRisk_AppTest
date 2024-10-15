@@ -58,11 +58,11 @@ def filter_and_display_data(selected_group, selected_food):
     if selected_food != 'すべて':
         df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
+    st.subheader('細菌ごとの検体数の合計')
     col1, col2 = st.columns(2)
 
     with col1:
         # 細菌ごとの検体数と陽性数の合計を計算
-        st.subheader('細菌ごとの検体数の合計')
         bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
         bacteria_samplesize.columns = ['細菌名', '検体数の合計']
         st.dataframe(bacteria_samplesize)
