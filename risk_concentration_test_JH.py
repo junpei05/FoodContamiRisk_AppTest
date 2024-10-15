@@ -58,7 +58,7 @@ def filter_and_display_data(selected_group, selected_food):
     if selected_food != 'すべて':
         df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
-    # st.write('-----------')
+    st.write('-----------')
     col1, col2 = st.columns(2)
 
     with col1:
@@ -77,7 +77,7 @@ def filter_and_display_data(selected_group, selected_food):
         ax.grid(True)
         st.pyplot(fig)
 
-    # st.write('-----------')
+    st.write('-----------')
     col3, col4 = st.columns(2)
 
     with col3:
@@ -99,7 +99,7 @@ def filter_and_display_data(selected_group, selected_food):
         plt.grid(True)
         st.pyplot(fig)
 
-    # st.write('-----------')
+    st.write('-----------')
     col5, col6 = st.columns(2)
 
     with col5:
