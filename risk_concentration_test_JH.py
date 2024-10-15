@@ -58,7 +58,7 @@ def filter_and_display_data(selected_group, selected_food):
     if selected_food != 'すべて':
         df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
-    st.write('-----------')
+    # st.write('-----------')
     st.subheader('細菌ごとの検体数の合計')
     col1, col2 = st.columns(2)
 
@@ -77,7 +77,7 @@ def filter_and_display_data(selected_group, selected_food):
         ax.grid(True)
         st.pyplot(fig)
 
-    st.write('-----------')
+    # st.write('-----------')
     st.subheader('すべての細菌の汚染濃度（すべての食品）')
     col3, col4 = st.columns(2)
 
@@ -99,7 +99,7 @@ def filter_and_display_data(selected_group, selected_food):
         plt.grid(True)
         st.pyplot(fig)
 
-    st.write('-----------')
+    # st.write('-----------')
     st.subheader('サルモネラの汚染濃度（すべての食品）')
     col5, col6 = st.columns(2)
 
@@ -124,7 +124,7 @@ def filter_and_display_data(selected_group, selected_food):
             st.write("サルモネラのデータが存在しないため、ヒストグラムを表示できません。")    
 
     # 選択された食品カテゴリと食品名に該当するデータ（すべての食品カテゴリと食品名）の表示
-    st.write('-----------')
+    # st.write('-----------')
     st.subheader('選択された食品カテゴリと食品名に該当するデータ （すべての食品カテゴリと食品名）')
     st.dataframe(df_filtered)
 
