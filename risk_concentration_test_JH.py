@@ -130,6 +130,7 @@ for bacteria_name, df_bacteria in bacteria_data:
 
         with col6:
             fig, ax = plt.subplots(figsize=(8, 6))
+            ax.set_xlim([0,10])
             ax.hist(df_bacteria['汚染濃度'].astype(float), bins=range(int(df_bacteria['汚染濃度'].astype(float).min()), int(df_bacteria['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
             ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
             ax.set_ylabel('頻度', fontsize=18)
