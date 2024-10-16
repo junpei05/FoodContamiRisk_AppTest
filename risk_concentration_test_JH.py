@@ -91,6 +91,7 @@ with col3:
 with col4:
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.hist(df_filtered['汚染濃度'].astype(float), bins=range(int(df_filtered['汚染濃度'].astype(float).min()), int(df_filtered['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+    ax.set_xlim([0,10])
     ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
     ax.set_ylabel('頻度', fontsize=18)
     ax.set_title('汚染濃度の分布', fontsize=20)
