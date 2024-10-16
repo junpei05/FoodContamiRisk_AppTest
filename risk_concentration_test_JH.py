@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.font_manager as fm
-from io import BytesIO
 
 # ページの設定
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
@@ -57,131 +56,41 @@ else:
 if selected_food != 'すべて':
     df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
-# 細菌ごとの検体数の合計を表示
-st.subheader('細菌ごとの検体数の合計')
-col1, col2 = st.columns(2)
+# 表示対象となる細菌リスト
+bacteria_list = [
+    ("Campylobacter", "カンピロバクターの汚染濃度（すべての食品）"),
+    ("Listeria", "リステリアの汚染濃度（すべての食品）"),
+    ("Escherichia coli", "腸管出血性大腸菌の汚染濃度（すべての食品）"),
+    ("Salmonella", "サルモネラの汚染濃度（すべての食品）")
+]
 
-with col1:
-    bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
-    bacteria_samplesize.columns = ['細菌名', '検体数の合計']
-    st.dataframe(bacteria_samplesize)
+# 細菌ごとのデータを取得してデータ数の多い順にソート
+bacteria_counts = []
+for bacteria, title in bacteria_list:
+    df_bacteria = df_filtered[df_filtered['細菌名'].str.contains(bacteria)]
+    if not df_bacteria.empty:
+        bacteria_counts.append((df_bacteria, title, len(df_bacteria)))
 
-with col2:
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数の合計'], color='skyblue')
-    ax.set_xlabel('検体数の合計', fontsize=14)
-    ax.set_ylabel('細菌名', fontsize=14)
-    ax.set_title('細菌ごとの検体数の合計', fontsize=16)
-    ax.grid(True)
-    st.pyplot(fig)
+# データ数の多い順にソート
+bacteria_counts.sort(key=lambda x: x[2], reverse=True)
 
-st.write('-----------')
-
-# すべての細菌の汚染濃度を表示
-st.subheader('すべての細菌の汚染濃度（すべての食品）')
-col3, col4 = st.columns(2)
-
-with col3:
-    df_bacteria_counts = df_filtered.copy()
-    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 9, 6]]
-    df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品詳細']
-    st.dataframe(df_bacteria_counts)
-    st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
-
-with col4:
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.hist(df_filtered['汚染濃度'].astype(float), bins=range(int(df_filtered['汚染濃度'].astype(float).min()), int(df_filtered['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-    ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-    ax.set_ylabel('頻度', fontsize=18)
-    ax.set_title('汚染濃度の分布', fontsize=20)
-    ax.tick_params(axis='both', which='major', labelsize=14)
-    plt.grid(True)
-    st.pyplot(fig)
-
-# カンピロのデータがある場合のみ表示
-df_Campylobacter_counts = df_filtered[df_filtered['細菌名'].str.contains('Campylobacter')]
-if not df_Campylobacter_counts.empty:
+# ソートされた順にセクションを表示
+for df_bacteria, title, count in bacteria_counts:
     st.write('-----------')
-    st.subheader('カンピロバクターの汚染濃度（すべての食品）')
+    st.subheader(title)
     col5, col6 = st.columns(2)
 
     with col5:
-        df_Campylobacter_counts = df_Campylobacter_counts.iloc[:, [0, 8, 9, 5, 6]]
-        df_Campylobacter_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
-        st.dataframe(df_Campylobacter_counts)
+        df_bacteria_display = df_bacteria.iloc[:, [0, 8, 9, 5, 6]]
+        df_bacteria_display.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
+        st.dataframe(df_bacteria_display)
 
     with col6:
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_Campylobacter_counts['汚染濃度'].astype(float), bins=range(int(df_Campylobacter_counts['汚染濃度'].astype(float).min()), int(df_Campylobacter_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax.hist(df_bacteria['汚染濃度'].astype(float), bins=range(int(df_bacteria['汚染濃度'].astype(float).min()), int(df_bacteria['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
         ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
         ax.set_ylabel('頻度', fontsize=18)
-        ax.set_title('汚染濃度の分布', fontsize=20)
-        ax.tick_params(axis='both', which='major', labelsize=14)
-        plt.grid(True)
-        st.pyplot(fig)
-
-# リステリアのデータがある場合のみ表示
-df_Listeria_counts = df_filtered[df_filtered['細菌名'].str.contains('Listeria')]
-if not df_Listeria_counts.empty:
-    st.write('-----------')
-    st.subheader('リステリアの汚染濃度（すべての食品）')
-    col5, col6 = st.columns(2)
-
-    with col5:
-        df_Listeria_counts = df_Listeria_counts.iloc[:, [0, 8, 9, 5, 6]]
-        df_Listeria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
-        st.dataframe(df_Listeria_counts)
-
-    with col6:
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_Listeria_counts['汚染濃度'].astype(float), bins=range(int(df_Listeria_counts['汚染濃度'].astype(float).min()), int(df_Listeria_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-        ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-        ax.set_ylabel('頻度', fontsize=18)
-        ax.set_title('汚染濃度の分布', fontsize=20)
-        ax.tick_params(axis='both', which='major', labelsize=14)
-        plt.grid(True)
-        st.pyplot(fig)
-
-# 腸管出血性大腸菌のデータがある場合のみ表示
-df_EHEC_counts = df_filtered[df_filtered['細菌名'].str.contains('Escherichia coli')]
-if not df_EHEC_counts.empty:
-    st.write('-----------')
-    st.subheader('腸管出血性大腸菌の汚染濃度（すべての食品）')
-    col5, col6 = st.columns(2)
-
-    with col5:
-        df_EHEC_counts = df_EHEC_counts.iloc[:, [0, 8, 9, 5, 6]]
-        df_EHEC_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
-        st.dataframe(df_EHEC_counts)
-
-    with col6:
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_EHEC_counts['汚染濃度'].astype(float), bins=range(int(df_EHEC_counts['汚染濃度'].astype(float).min()), int(df_EHEC_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-        ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-        ax.set_ylabel('頻度', fontsize=18)
-        ax.set_title('汚染濃度の分布', fontsize=20)
-        ax.tick_params(axis='both', which='major', labelsize=14)
-        plt.grid(True)
-        st.pyplot(fig)
-
-# サルモネラのデータがある場合のみ表示
-df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
-if not df_Salmonella_counts.empty:
-    st.write('-----------')
-    st.subheader('サルモネラの汚染濃度（すべての食品）')
-    col5, col6 = st.columns(2)
-
-    with col5:
-        df_Salmonella_counts = df_Salmonella_counts.iloc[:, [0, 8, 9, 5, 6]]
-        df_Salmonella_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
-        st.dataframe(df_Salmonella_counts)
-
-    with col6:
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.hist(df_Salmonella_counts['汚染濃度'].astype(float), bins=range(int(df_Salmonella_counts['汚染濃度'].astype(float).min()), int(df_Salmonella_counts['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-        ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-        ax.set_ylabel('頻度', fontsize=18)
-        ax.set_title('汚染濃度の分布', fontsize=20)
+        ax.set_title(f'{title}', fontsize=20)
         ax.tick_params(axis='both', which='major', labelsize=14)
         plt.grid(True)
         st.pyplot(fig)
