@@ -62,7 +62,7 @@ group_title = f"（{selected_group} - {selected_food}）" if selected_group != '
               f"（{selected_group}）" if selected_group != 'すべて' else "（すべての食品カテゴリと食品名）"
 
 # 細菌ごとの検体数の合計を表示
-st.subheader(f'細菌ごとの検体数の合計{group_title}')
+st.subheader(f'細菌ごとの検体数{group_title}')
 col1, col2 = st.columns(2)
 
 with col1:
@@ -145,5 +145,5 @@ for bacteria_name, df_bacteria in bacteria_data:
 
 # 選択された食品カテゴリと食品名に該当するデータを表示
 st.write('-----------')
-st.subheader('選択された食品カテゴリと食品名に該当するデータ （すべての食品カテゴリと食品名）')
+st.subheader(f'選択された食品カテゴリと食品名に該当するデータ{group_title}')
 st.dataframe(df_filtered)
