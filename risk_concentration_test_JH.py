@@ -67,12 +67,12 @@ col1, col2 = st.columns(2)
 
 with col1:
     bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
-    bacteria_samplesize.columns = ['細菌名', '検体数の合計']
+    bacteria_samplesize.columns = ['細菌名', '検体数']
     st.dataframe(bacteria_samplesize)
 
 with col2:
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数の合計'], color='skyblue')
+    ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数'], color='skyblue')
     ax.set_xlabel('検体数', fontsize=18)
     ax.set_ylabel('細菌名', fontsize=18)
     ax.set_title(f'細菌ごとの検体数{group_title}', fontsize=20)
