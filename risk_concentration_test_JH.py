@@ -9,11 +9,6 @@ import os
 # Streamlit CloudのSecretsで保存したテーマを取得
 theme_setting = os.getenv("THEME", "light")  # "light" or "dark"
 
-if theme_setting == "dark":
-    st.set_page_config(page_title="My App", layout="centered", theme="dark")
-else:
-    st.set_page_config(page_title="My App", layout="centered", theme="light")
-
 # ページの設定
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
