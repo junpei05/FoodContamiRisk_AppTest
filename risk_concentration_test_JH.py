@@ -18,6 +18,10 @@ app_ratio_url = "https://m7gk8u5qjmoysfsmf5kgqk.streamlit.app/"
 # フォントファイルのパスを設定
 font_path = 'NotoSansCJKjp-Regular.otf'
 
+# 図のフォントサイズを設定
+size_label = 18
+size_title = 20
+
 # Streamlit のアプリケーション
 st.title('食中毒細菌の汚染濃度の統計値')
 st.write("[食中毒細菌汚染実態_汚染濃度.csv](%s)の可視化です。" % csv_url_gui)
@@ -78,9 +82,10 @@ with col1:
 with col2:
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数'], color='skyblue')
-    ax.set_xlabel('検体数', fontsize=18)
-    ax.set_ylabel('細菌名', fontsize=18)
-    ax.set_title(f'細菌ごとの検体数{group_title}', fontsize=20)
+    ax.set_xlabel('検体数', fontsize=size_label)
+    ax.set_ylabel('細菌名', fontsize=size_label)
+    ax.set_title(f'細菌ごとの検体数{group_title}', fontsize=size_title)
+    ax.tick_params(axis='both', which='major', labelsize=size_label)
     ax.grid(True)
     st.pyplot(fig)
 
@@ -101,10 +106,10 @@ with col4:
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.hist(df_filtered['汚染濃度'].astype(float), bins=range(int(df_filtered['汚染濃度'].astype(float).min()), int(df_filtered['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
     ax.set_xlim([0,10])
-    ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-    ax.set_ylabel('頻度', fontsize=18)
-    ax.set_title(f'汚染濃度の分布{group_title}', fontsize=20)
-    ax.tick_params(axis='both', which='major', labelsize=14)
+    ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
+    ax.set_ylabel('頻度', fontsize=size_label)
+    ax.set_title(f'汚染濃度の分布{group_title}', fontsize=size_title)
+    ax.tick_params(axis='both', which='major', labelsize=size_label)
     plt.grid(True)
     st.pyplot(fig)
 
@@ -141,10 +146,10 @@ for bacteria_name, df_bacteria in bacteria_data:
             fig, ax = plt.subplots(figsize=(8, 6))
             ax.set_xlim([0,10])
             ax.hist(df_bacteria['汚染濃度'].astype(float), bins=range(int(df_bacteria['汚染濃度'].astype(float).min()), int(df_bacteria['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-            ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
-            ax.set_ylabel('頻度', fontsize=18)
-            ax.set_title(f'{bacteria_name}の汚染濃度の分布{group_title}', fontsize=20)
-            ax.tick_params(axis='both', which='major', labelsize=14)
+            ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
+            ax.set_ylabel('頻度', fontsize=size_label)
+            ax.set_title(f'{bacteria_name}の汚染濃度の分布{group_title}', fontsize=size_title)
+            ax.tick_params(axis='both', which='major', labelsize=size_label)
             plt.grid(True)
             st.pyplot(fig)
 
