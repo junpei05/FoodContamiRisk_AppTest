@@ -57,8 +57,12 @@ else:
 if selected_food != 'すべて':
     df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
+# タイトルに選択された食品カテゴリと食品名を記載
+group_title = f"（{selected_group} - {selected_food}）" if selected_group != 'すべて' and selected_food != 'すべて' else \
+              f"（{selected_group}）" if selected_group != 'すべて' else "（すべての食品カテゴリと食品名）"
+
 # 細菌ごとの検体数の合計を表示
-st.subheader('細菌ごとの検体数の合計')
+st.subheader(f'細菌ごとの検体数の合計{group_title}')
 col1, col2 = st.columns(2)
 
 with col1:
@@ -71,20 +75,20 @@ with col2:
     ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数の合計'], color='skyblue')
     ax.set_xlabel('検体数の合計', fontsize=14)
     ax.set_ylabel('細菌名', fontsize=14)
-    ax.set_title('細菌ごとの検体数の合計', fontsize=16)
+    ax.set_title(f'細菌ごとの検体数{group_title}', fontsize=16)
     ax.grid(True)
     st.pyplot(fig)
 
 st.write('-----------')
 
 # すべての細菌の汚染濃度を表示
-st.subheader('すべての細菌の汚染濃度（すべての食品）')
+st.subheader(f'すべての細菌の汚染濃度{group_title}')
 col3, col4 = st.columns(2)
 
 with col3:
     df_bacteria_counts = df_filtered.copy()
-    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 9, 6]]
-    df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品詳細']
+    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 9, 5, 6]]
+    df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
     st.dataframe(df_bacteria_counts)
     st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
 
@@ -94,7 +98,7 @@ with col4:
     ax.set_xlim([0,10])
     ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
     ax.set_ylabel('頻度', fontsize=18)
-    ax.set_title('汚染濃度の分布', fontsize=20)
+    ax.set_title(f'汚染濃度の分布{group_title}', fontsize=20)
     ax.tick_params(axis='both', which='major', labelsize=14)
     plt.grid(True)
     st.pyplot(fig)
@@ -120,7 +124,7 @@ bacteria_data.sort(key=lambda x: len(x[1]), reverse=True)
 for bacteria_name, df_bacteria in bacteria_data:
     if not df_bacteria.empty:
         st.write('-----------')
-        st.subheader(f'{bacteria_name}の汚染濃度（すべての食品）')
+        st.subheader(f'{bacteria_name}の汚染濃度{group_title}')
         col5, col6 = st.columns(2)
 
         with col5:
@@ -134,7 +138,7 @@ for bacteria_name, df_bacteria in bacteria_data:
             ax.hist(df_bacteria['汚染濃度'].astype(float), bins=range(int(df_bacteria['汚染濃度'].astype(float).min()), int(df_bacteria['汚染濃度'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
             ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=18)
             ax.set_ylabel('頻度', fontsize=18)
-            ax.set_title('汚染濃度の分布', fontsize=20)
+            ax.set_title(f'{bacteria_name}の汚染濃度の分布{group_title}', fontsize=20)
             ax.tick_params(axis='both', which='major', labelsize=14)
             plt.grid(True)
             st.pyplot(fig)
