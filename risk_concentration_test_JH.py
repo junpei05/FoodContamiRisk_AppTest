@@ -12,6 +12,9 @@ st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 csv_url = "https://raw.githubusercontent.com/kento-koyama/food_micro_data_risk/main/%E9%A3%9F%E4%B8%AD%E6%AF%92%E7%B4%B0%E8%8F%8C%E6%B1%9A%E6%9F%93%E5%AE%9F%E6%85%8B_%E6%B1%9A%E6%9F%93%E6%BF%83%E5%BA%A6.csv"
 csv_url_gui = "https://github.com/kento-koyama/food_micro_data_risk/blob/main/%E9%A3%9F%E4%B8%AD%E6%AF%92%E7%B4%B0%E8%8F%8C%E6%B1%9A%E6%9F%93%E5%AE%9F%E6%85%8B_%E6%B1%9A%E6%9F%93%E6%BF%83%E5%BA%A6.csv"
 
+# 汚染率の可視化アプリURL
+app_ratio_url = "https://m7gk8u5qjmoysfsmf5kgqk.streamlit.app/"
+
 # フォントファイルのパスを設定
 font_path = 'NotoSansCJKjp-Regular.otf'
 
@@ -69,6 +72,7 @@ with col1:
     bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
     bacteria_samplesize.columns = ['細菌名', '検体数']
     st.dataframe(bacteria_samplesize)
+    st.write('陽性率の可視化アプリは[こちら](%s)から' % app_ratio_url)
 
 with col2:
     fig, ax = plt.subplots(figsize=(8, 6))
