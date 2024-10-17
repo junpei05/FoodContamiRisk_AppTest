@@ -62,6 +62,7 @@ if selected_food != 'すべて':
 
 # タイトルに選択された食品カテゴリと食品名を記載
 group_title = f"（{selected_group} - {selected_food}）" if selected_group != 'すべて' and selected_food != 'すべて' else \
+              f"（{selected_food}）" if selected_group == 'すべて' and selected_food != 'すべて' else \
               f"（{selected_group}）" if selected_group != 'すべて' else "（すべての食品カテゴリと食品名）"
 
 # 細菌ごとの検体数の合計を表示
