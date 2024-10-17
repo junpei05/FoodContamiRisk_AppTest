@@ -18,7 +18,7 @@ app_ratio_url = "https://m7gk8u5qjmoysfsmf5kgqk.streamlit.app/"
 # フォントファイルのパスを設定
 font_path = 'NotoSansCJKjp-Regular.otf'
 
-# 図のフォントサイズを設定
+# 図のフォントサイズを一括で設定
 size_label = 18
 size_title = 20
 
