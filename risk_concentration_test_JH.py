@@ -73,7 +73,7 @@ with col1:
 with col2:
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数の合計'], color='skyblue')
-    ax.set_xlabel('検体数の合計', fontsize=18)
+    ax.set_xlabel('検体数', fontsize=18)
     ax.set_ylabel('細菌名', fontsize=18)
     ax.set_title(f'細菌ごとの検体数{group_title}', fontsize=20)
     ax.grid(True)
