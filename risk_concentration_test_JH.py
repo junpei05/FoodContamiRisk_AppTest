@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.font_manager as fm
 from io import BytesIO
+import os
 
 # Streamlit CloudのSecretsで保存したテーマを取得
 theme_setting = os.getenv("THEME", "light")  # "light" or "dark"
