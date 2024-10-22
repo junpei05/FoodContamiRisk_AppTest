@@ -1,8 +1,8 @@
 日本語,English
 調査年,Year
 地域ID,Region ID
-検査施設,
-農産物カテゴリ,
+検査施設,Facility
+農産物カテゴリ,Products Category
 食品カテゴリ,Food Category
 食品名,Food Name
 食品詳細,Food deatails
@@ -10,7 +10,7 @@
 細菌名,Organism
 細菌濃度,Concentration
 単位,Unit
-実施機関,
+実施機関,Agency
 調査名,Survey
 備考,detai information
 牛肉,Beef
@@ -34,6 +34,6 @@
 その他,"Other, mixed, uncategorised or unknown type of food"
 胸肉,breast
 不検出,not detected
-厚生労働省,
-農林水産省,
+厚生労働省,"Ministry of Health, Labour and Welfare"
+農林水産省,"Ministry of Agriculture, Forestry and Fisheries"
 国立医薬品食品衛生研究所,
