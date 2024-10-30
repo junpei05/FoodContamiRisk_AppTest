@@ -102,7 +102,6 @@ with col3:
     df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 9, 5, 6]]
     df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度', '食品名', '食品詳細']
     st.dataframe(df_bacteria_counts)
-    st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
 
 with col4:
     fig, ax = plt.subplots(figsize=(8, 6))
@@ -159,3 +158,4 @@ for bacteria_name, df_bacteria in bacteria_data:
 st.write('-----------')
 st.subheader(f'選択された食品カテゴリと食品名に該当するデータ{group_title}')
 st.dataframe(df_filtered)
+st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
