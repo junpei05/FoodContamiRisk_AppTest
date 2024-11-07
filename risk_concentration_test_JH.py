@@ -47,8 +47,8 @@ df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
 
 # グラフ用の汚染濃度列を作成
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
-df['汚染濃度_graph'] = np.where(df['単位'] == 'CFU/g', np.log10(df['汚染濃度']), df['汚染濃度'])
-df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,15,10,11,12,13,14]]
+df['汚染濃度_logCFU/g'] = np.where(df['単位'] == 'CFU/g', np.log10(df['汚染濃度']), df['汚染濃度'])
+df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,15,11,12,13,14]]
 
 # サイドバーに選択オプションを追加
 st.sidebar.header('フィルターオプション')
@@ -104,13 +104,13 @@ col3, col4 = st.columns(2)
 
 with col3:
     df_bacteria_counts = df_filtered.copy()
-    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 10, 5, 6]]
+    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
     df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
     st.dataframe(df_bacteria_counts)
 
 with col4:
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.hist(df_filtered['汚染濃度_graph'].astype(float), bins=range(int(df_filtered['汚染濃度_graph'].astype(float).min()), int(df_filtered['汚染濃度_graph'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+    ax.hist(df_filtered['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_filtered['汚染濃度_logCFU/g'].astype(float).min()), int(df_filtered['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
     ax.set_xlim([0,10])
     ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
     ax.set_ylabel('頻度', fontsize=size_label)
@@ -144,14 +144,14 @@ for bacteria_name, df_bacteria in bacteria_data:
         col5, col6 = st.columns(2)
 
         with col5:
-            df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 10, 5, 6]]
+            df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
             df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
             st.dataframe(df_bacteria_conc)
 
         with col6:
             fig, ax = plt.subplots(figsize=(8, 6))
             ax.set_xlim([0,10])
-            ax.hist(df_bacteria['汚染濃度_graph'].astype(float), bins=range(int(df_bacteria['汚染濃度_graph'].astype(float).min()), int(df_bacteria['汚染濃度_graph'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+            ax.hist(df_bacteria['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_bacteria['汚染濃度_logCFU/g'].astype(float).min()), int(df_bacteria['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
             ax.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
             ax.set_ylabel('頻度', fontsize=size_label)
             ax.set_title(f'{bacteria_name}の汚染濃度の分布{group_title}', fontsize=size_title)
