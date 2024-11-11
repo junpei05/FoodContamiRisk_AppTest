@@ -114,6 +114,17 @@ with col3:
     df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
     st.dataframe(df_bacteria_counts)
 
+    # 汚染濃度の平均と標本標準偏差の計算
+    mean_concentration = df_bacteria_counts['汚染濃度_logCFU/g'].mean()
+    std_concentration = df_bacteria_counts['汚染濃度_logCFU/g'].std(ddof=1)
+    # 平均と標準偏差の表示用データフレームを作成
+    stats_df = pd.DataFrame({
+        '統計量': ['平均', '標準偏差'],
+        '汚染濃度[logCFU/g]': [mean_concentration, std_concentration]
+    })
+    # 統計情報を表示
+    st.table(stats_df)
+
 with col4:
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.hist(df_filtered['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_filtered['汚染濃度_logCFU/g'].astype(float).min()), int(df_filtered['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
@@ -153,6 +164,17 @@ for bacteria_name, df_bacteria in bacteria_data:
             df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
             df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
             st.dataframe(df_bacteria_conc)
+
+            # 汚染濃度の平均と標本標準偏差の計算
+            mean_conc = df_bacteria_conc['汚染濃度_logCFU/g'].mean()
+            std_conc = df_bacteria_conc['汚染濃度_logCFU/g'].std(ddof=1)
+            # 平均と標準偏差の表示用データフレームを作成
+            stats_df = pd.DataFrame({
+                '統計量': ['平均', '標準偏差'],
+                '汚染濃度[logCFU/g]': [mean_conc, std_conc]
+            })
+            # 統計情報を表示
+            st.table(stats_df)
 
         with col6:
             fig, ax = plt.subplots(figsize=(8, 6))
