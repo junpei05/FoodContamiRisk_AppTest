@@ -115,12 +115,12 @@ with col3:
     st.dataframe(df_bacteria_counts)
 
     # 汚染濃度の平均と標本標準偏差の計算
-    mean_concentration = df_bacteria_counts['汚染濃度_logCFU/g'].mean()
-    std_concentration = df_bacteria_counts['汚染濃度_logCFU/g'].std(ddof=1)
+    mean_concentration = df_bacteria_counts['汚染濃度[logCFU]/g'].mean()
+    std_concentration = df_bacteria_counts['汚染濃度[logCFU]/g'].std(ddof=1)
     # 平均と標準偏差の表示用データフレームを作成
     stats_df = pd.DataFrame({
         '統計量': ['平均', '標準偏差'],
-        '汚染濃度[logCFU/g]': [mean_concentration, std_concentration]
+        '汚染濃度 [logCFU/g]': [mean_concentration, std_concentration]
     })
     # 統計情報を表示
     st.table(stats_df)
@@ -166,12 +166,12 @@ for bacteria_name, df_bacteria in bacteria_data:
             st.dataframe(df_bacteria_conc)
 
             # 汚染濃度の平均と標本標準偏差の計算
-            mean_conc = df_bacteria_conc['汚染濃度_logCFU/g'].mean()
-            std_conc = df_bacteria_conc['汚染濃度_logCFU/g'].std(ddof=1)
+            mean_conc = df_bacteria_conc['汚染濃度 [logCFU/g]'].mean()
+            std_conc = df_bacteria_conc['汚染濃度 [logCFU/g]'].std(ddof=1)
             # 平均と標準偏差の表示用データフレームを作成
             stats_df = pd.DataFrame({
                 '統計量': ['平均', '標準偏差'],
-                '汚染濃度[logCFU/g]': [mean_conc, std_conc]
+                '汚染濃度 [logCFU/g]': [mean_conc, std_conc]
             })
             # 統計情報を表示
             st.table(stats_df)
