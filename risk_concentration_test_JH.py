@@ -52,7 +52,8 @@ df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
 
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
-df['汚染濃度_logCFU/g'] = np.where(df['単位'] == 'CFU/g', func_round(np.log10(df['汚染濃度']), ndigits=2)), df['汚染濃度'])
+df['汚染濃度_logCFU/g'] = np.where(df['単位'] == 'CFU/g', np.log10(df['汚染濃度']), df['汚染濃度'])
+df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2) if pd.notna(x) else x)
 df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,15,11,12,13,14]]
 
 # サイドバーに選択オプションを追加
