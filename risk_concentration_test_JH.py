@@ -8,8 +8,8 @@ import os
 
 # 四捨五入で桁丸めるための関数を定義
 def func_round(number, ndigits=0):
-    p = 10**ndigits
-    return (number * p * 2 + 1) // 2 / p
+    p = 10 ** ndigits
+    return int(number * p + 0.5) / p
 
 
 # ページの設定
