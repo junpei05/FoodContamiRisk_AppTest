@@ -123,7 +123,7 @@ with col3:
     std_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].std(ddof=1), ndigits=2)
     # 平均と標準偏差の表示用データフレームを作成
     stats_df = pd.DataFrame({
-        '平均': [format_number(mean_concentration, ndigits=2)],
+        '平均 [log CFU/g]': [format_number(mean_concentration, ndigits=2)],
         '標準偏差': [format_number(std_concentration, ndigits=2)]
     })
     # 統計情報を表示
@@ -174,7 +174,7 @@ for bacteria_name, df_bacteria in bacteria_data:
             std_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].std(ddof=1), ndigits=2)
             # 平均と標準偏差の表示用データフレームを作成
             stats_df = pd.DataFrame({
-                '平均': [format_number(mean_conc, ndigits=2)],
+                '平均 [log CFU/g]': [format_number(mean_conc, ndigits=2)],
                 '標準偏差': [format_number(std_conc, ndigits=2)]
             })
             # 統計情報を表示
