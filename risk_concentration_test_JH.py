@@ -97,7 +97,7 @@ with col1:
     st.write('陽性率の可視化アプリは[こちら](%s)から' % app_ratio_url)
 
 with col2:
-    fig1, ax1 = plt.subplots(figsize=(10,8))
+    fig1, ax1 = plt.subplots(figsize=(8,6))
     ax1.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数'], color='skyblue')
     ax1.set_xlabel('検体数', fontsize=size_label)
     ax1.set_ylabel('細菌名', fontsize=size_label)
