@@ -115,7 +115,7 @@ with col3:
     df_bacteria_counts = df_filtered.copy()
     df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
     df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-    st.dataframe(df_bacteria_counts, hide_index=True)
+    st.dataframe(df_bacteria_counts, height=175, hide_index=True)
 
     # 汚染濃度の平均と標本標準偏差の計算
     mean_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
@@ -165,7 +165,7 @@ for bacteria_name, df_bacteria in bacteria_data:
         with col5:
             df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
             df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-            st.dataframe(df_bacteria_conc, hide_index=True)
+            st.dataframe(df_bacteria_conc, height=175, hide_index=True)
 
             # 汚染濃度の平均と標本標準偏差の計算
             mean_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
