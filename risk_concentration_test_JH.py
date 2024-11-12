@@ -32,7 +32,7 @@ font_path = 'NotoSansCJKjp-Regular.otf'
 # 図のフォントサイズを一括で設定
 size_label = 18
 size_title = 20
-size_hight = 210
+size_height = 210
 
 # Streamlit のアプリケーション
 st.title('食中毒細菌の汚染濃度の統計値')
@@ -94,7 +94,7 @@ col1, col2 = st.columns(2)
 with col1:
     bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
     bacteria_samplesize.columns = ['細菌名', '検体数']
-    st.dataframe(bacteria_samplesize, height=size_hight, hide_index=True)
+    st.dataframe(bacteria_samplesize, height=size_height, hide_index=True)
     st.write('陽性率の可視化アプリは[こちら](%s)から' % app_ratio_url)
 
 with col2:
@@ -166,7 +166,7 @@ for bacteria_name, df_bacteria in bacteria_data:
         with col5:
             df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
             df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-            st.dataframe(df_bacteria_conc, height=size_hight, hide_index=True)
+            st.dataframe(df_bacteria_conc, height=size_height, hide_index=True)
 
             # 汚染濃度の平均と標本標準偏差の計算
             mean_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
