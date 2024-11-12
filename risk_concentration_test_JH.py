@@ -191,5 +191,5 @@ for bacteria_name, df_bacteria in bacteria_data:
 # 選択された食品カテゴリと食品名に該当するデータを表示
 st.write('-----------')
 st.subheader(f'選択された食品カテゴリと食品名に該当するデータ{group_title}')
-st.dataframe(df_filtered)
+st.dataframe(df_filtered.reset_index())
 st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
