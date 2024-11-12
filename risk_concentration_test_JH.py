@@ -176,7 +176,7 @@ for bacteria_name, df_bacteria in bacteria_data:
                 '標準偏差': [format_number(std_conc, ndigits=2)]
             })
             # 統計情報を表示
-            st.dataframe(stats_df)
+            st.dataframe(stats_df, hide_index=True)
 
         with col6:
             fig3, ax3 = plt.subplots(figsize=(8, 6))
