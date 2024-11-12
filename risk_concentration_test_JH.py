@@ -126,7 +126,7 @@ with col3:
         '標準偏差': [format_number(std_concentration, ndigits=2)]
     })
     # 統計情報を表示
-    st.dataframe(stats_df)
+    st.dataframe(stats_df, hide_index=True)
 
 with col4:
     fig2, ax2 = plt.subplots(figsize=(8, 6))
