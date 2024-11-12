@@ -15,6 +15,20 @@ def format_number(number, ndigits=0):
     formatted = f"{number:.{ndigits}f}".rstrip('0').rstrip('.')
     return formatted
 
+def calc_df_height(df, max_rows=6, row_height=35):
+    """
+    指定されたデータフレームの行数に基づき、適切な高さを計算します。
+    
+    Parameters:
+        df (pd.DataFrame): 高さを計算する対象のデータフレーム。
+        max_rows (int): 表示する最大行数。デフォルトは6行。
+        row_height (int): 1行あたりの高さ（ピクセル単位）。デフォルトは35。
+        
+    Returns:
+        int: データフレームの高さ（ピクセル単位）。
+    """
+    rows_to_display = min(len(df), max_rows)
+    return row_height * rows_to_display
 
 # ページの設定
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
@@ -32,6 +46,8 @@ font_path = 'NotoSansCJKjp-Regular.otf'
 # 図のフォントサイズを一括で設定
 size_label = 18
 size_title = 20
+
+
 
 # Streamlit のアプリケーション
 st.title('食中毒細菌の汚染濃度の統計値')
@@ -115,7 +131,7 @@ with col3:
     df_bacteria_counts = df_filtered.copy()
     df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
     df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-    st.dataframe(df_bacteria_counts, height=210, hide_index=True)
+    st.dataframe(df_bacteria_counts, height=calc_df_height(df_bacteria_counts), hide_index=True)
 
     # 汚染濃度の平均と標本標準偏差の計算
     mean_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
@@ -165,7 +181,7 @@ for bacteria_name, df_bacteria in bacteria_data:
         with col5:
             df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
             df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-            st.dataframe(df_bacteria_conc, height=210, hide_index=True)
+            st.dataframe(df_bacteria_conc, height=calc_df_height(df_bacteria_conc), hide_index=True)
 
             # 汚染濃度の平均と標本標準偏差の計算
             mean_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
