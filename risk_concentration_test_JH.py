@@ -80,7 +80,6 @@ else:
 if selected_food != 'すべて':
     df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
-df_filtered = df_filtered.reset_index()
 
 # タイトルに選択された食品カテゴリと食品名を記載
 group_title = f"（{selected_group} - {selected_food}）" if selected_group != 'すべて' and selected_food != 'すべて' else \
