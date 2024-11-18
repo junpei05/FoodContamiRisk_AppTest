@@ -102,12 +102,12 @@ df = pd.read_csv(csv_url, encoding='utf-8-sig')
 
 # log CFU/g のみ、汚染濃度が '不検出' または '-' のものを除外
 df = df[~((df['汚染濃度'] == '不検出') | (df['汚染濃度'] == '-') | (df['汚染濃度'] == np.nan))]
-# df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
+df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
 
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
 # 汚染濃度をCFU/gに換算し、常用対数を計算
-df['汚染濃度_logCFU/g'] = df.apply(
+df['汚染濃度_log CFU/g'] = df.apply(
     lambda row: np.log10(convert_mpn_value(row['汚染濃度'], row['単位']))
     if pd.notna(row['汚染濃度']) and pd.notna(row['単位']) and convert_mpn_value(row['汚染濃度'], row['単位']) > 0
     else np.nan,
