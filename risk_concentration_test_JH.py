@@ -70,7 +70,10 @@ plt.rcParams['font.family'] = font_prop.get_name()
 df = pd.read_csv(csv_url, encoding='utf-8-sig')
 
 # log CFU/g のみ、汚染濃度が '不検出' または '-' のものを除外
-df = df[~((df['汚染濃度'] == '不検出') | (df['汚染濃度'] == '-') | (df['汚染濃度'] == np.nan)| ((df['食品カテゴリ'] == np.nan)&(df['食品名'] == np.nan)))]
+df = df[~((df['汚染濃度'] == '不検出') | (df['汚染濃度'] == '-') | (df['汚染濃度'] == np.nan))]
+# 食品カテゴリと食品名が共にNaNの行を除外
+df = df[~(df['食品カテゴリ'].isna() & df['食品名'].isna())]
+# 単位を指定
 df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
 
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
