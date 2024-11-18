@@ -11,7 +11,6 @@ def func_round(number, ndigits=0):
     if pd.isna(number):  # NaN チェック
         return np.nan  # NaN をそのまま返す
     p = 10 ** ndigits
-    number = number+1
     return float(int(number * p + 0.5) / p)
 
 # 表示用フォーマット関数
@@ -19,7 +18,7 @@ def format_number(number, ndigits=0):
     formatted = f"{number:.{ndigits}f}".rstrip('0').rstrip('.')
     return formatted
 
-def calc_df_height(df, max_rows=6, row_height=35):
+def calc_df_height(df, max_rows=5, row_height=35):
     """
     指定されたデータフレームの行数に基づき、適切な高さを計算します。
     
@@ -31,7 +30,7 @@ def calc_df_height(df, max_rows=6, row_height=35):
     Returns:
         int: データフレームの高さ（ピクセル単位）。
     """
-    rows_to_display = min(len(df), max_rows)
+    rows_to_display = min(len(df), max_rows)+1
     return row_height * rows_to_display
 
 # ページの設定
