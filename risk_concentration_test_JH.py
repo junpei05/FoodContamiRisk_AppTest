@@ -11,6 +11,7 @@ def func_round(number, ndigits=0):
     if pd.isna(number):  # NaN チェック
         return np.nan  # NaN をそのまま返す
     p = 10 ** ndigits
+    number = number+1
     return float(int(number * p + 0.5) / p)
 
 # 表示用フォーマット関数
