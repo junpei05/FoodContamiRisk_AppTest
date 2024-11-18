@@ -6,6 +6,7 @@ import matplotlib.font_manager as fm
 from io import BytesIO
 import os
 
+
 # 四捨五入で桁丸めるための関数を定義
 def func_round(number, ndigits=0):
     if pd.isna(number):  # NaN チェック
@@ -18,6 +19,36 @@ def format_number(number, ndigits=0):
     formatted = f"{number:.{ndigits}f}".rstrip('0').rstrip('.')
     return formatted
 
+# MPN単位をg単位に換算する関数
+def convert_mpn_value(mpn_value, unit):
+    """
+    MPNの単位をg単位に換算する。
+
+    Parameters:
+        mpn_value (float): 汚染濃度の値。
+        unit (str): 汚染濃度の単位。
+
+    Returns:
+        float: 換算後のg単位のMPN値。変換不可の場合はnp.nan。
+    """
+    if pd.isna(mpn_value) or pd.isna(unit):  # 値や単位がNaNの場合
+        return np.nan
+
+    # 単位が MPN/<X>g の形式の場合、Xを抽出して換算
+    if 'MPN/' in unit:
+        match = re.search(r'MPN/(\d+)g', unit)
+        if match:
+            grams = int(match.group(1))  # グラム数を抽出
+            return mpn_value / grams
+
+    # 単位が MPN/g の場合、そのまま値を返す
+    if unit == 'MPN/g':
+        return mpn_value
+
+    # その他の単位はNaN を返す
+    return np.nan
+
+# 表の高さを指定
 def calc_df_height(df, max_rows=6, row_height=35):
     """
     指定されたデータフレームの行数に基づき、適切な高さを計算します。
@@ -71,10 +102,17 @@ df = pd.read_csv(csv_url, encoding='utf-8-sig')
 
 # log CFU/g のみ、汚染濃度が '不検出' または '-' のものを除外
 df = df[~((df['汚染濃度'] == '不検出') | (df['汚染濃度'] == '-') | (df['汚染濃度'] == np.nan))]
-df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
+# df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
 
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
+# 汚染濃度をCFU/gに換算し、常用対数を計算
+df['汚染濃度_logCFU/g'] = df.apply(
+    lambda row: np.log10(convert_mpn_value(row['汚染濃度'], row['単位']))
+    if pd.notna(row['汚染濃度']) and pd.notna(row['単位']) and convert_mpn_value(row['汚染濃度'], row['単位']) > 0
+    else np.nan,
+    axis=1
+)
 df['汚染濃度_logCFU/g'] = np.where(df['単位'] == 'CFU/g', np.log10(df['汚染濃度']), df['汚染濃度'])
 df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2))
 df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,15,11,12,13,14]]
