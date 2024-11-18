@@ -8,8 +8,11 @@ import os
 
 # 四捨五入で桁丸めるための関数を定義
 def func_round(number, ndigits=0):
+    if pd.isna(number):  # NaN チェック
+        return np.nan  # NaN をそのまま返す
     p = 10 ** ndigits
     return float(int(number * p + 0.5) / p)
+
 # 表示用フォーマット関数
 def format_number(number, ndigits=0):
     formatted = f"{number:.{ndigits}f}".rstrip('0').rstrip('.')
@@ -73,7 +76,7 @@ df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
 df['汚染濃度_logCFU/g'] = np.where(df['単位'] == 'CFU/g', np.log10(df['汚染濃度']), df['汚染濃度'])
-df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2) if pd.notna(x) else x)
+df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2))
 df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,15,11,12,13,14]]
 
 # サイドバーで食品カテゴリを選択
@@ -135,7 +138,8 @@ with col3:
 
     # 汚染濃度の平均と標本標準偏差の計算
     mean_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
-    std_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].std(ddof=1), ndigits=2)
+    std_concentration = df_bacteria_counts['汚染濃度 [log CFU/g]'].std(ddof=1)
+    std_concentration = func_round(std_concentration, ndigits=2) if not pd.isna(std_concentration) else np.nan
     # 平均と標準偏差の表示用データフレームを作成
     stats_df = pd.DataFrame({
         '平均 [log CFU/g]': [format_number(mean_concentration, ndigits=2)],
@@ -185,7 +189,8 @@ for bacteria_name, df_bacteria in bacteria_data:
 
             # 汚染濃度の平均と標本標準偏差の計算
             mean_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
-            std_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].std(ddof=1), ndigits=2)
+            std_conc = df_bacteria_conc['汚染濃度 [log CFU/g]'].std(ddof=1)
+            std_conc = func_round(std_conc, ndigits=2) if not pd.isna(std_concentration) else np.nan
             # 平均と標準偏差の表示用データフレームを作成
             stats_df = pd.DataFrame({
                 '平均 [log CFU/g]': [format_number(mean_conc, ndigits=2)],
