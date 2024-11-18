@@ -83,7 +83,8 @@ df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_r
 df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,15,11,12,13,14]]
 
 # サイドバーで食品カテゴリを選択
-selected_group = st.sidebar.selectbox('食品カテゴリを選択してください:', ['すべて'] + list(df['食品カテゴリ'].unique()))
+categories = ['すべて'] + list(df['食品カテゴリ'].unique())
+selected_group = st.sidebar.selectbox('食品カテゴリを選択してください:', categories)
 
 # 選択された食品カテゴリに基づいて食品名を動的に変更
 if selected_group != 'すべて':
@@ -91,130 +92,134 @@ if selected_group != 'すべて':
 else:
     df_filtered = df
 
-selected_food = st.sidebar.selectbox('食品名を選択してください:', ['すべて'] + list(df_filtered['食品名'].unique()))
-
-# 選択された食品カテゴリと食品名でデータをフィルタリング
-if selected_group != 'すべて':
-    df_filtered = df[df['食品カテゴリ'] == selected_group]
+# 食品名の選択肢を取得（フィルタリングされたデータに基づく）
+if not df_filtered.empty:
+    food_names = ['すべて'] + list(df_filtered['食品名'].unique())
 else:
-    df_filtered = df
+    food_names = ['すべて']
 
+selected_food = st.sidebar.selectbox('食品名を選択してください:', food_names)
+
+# 食品名に基づいてデータをフィルタリング
 if selected_food != 'すべて':
     df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
 
+# データがない場合は処理を中止して警告を表示
+if df_filtered.empty:
+    st.warning("該当するデータがありません。条件を変更してください。")
+else:
+    # タイトルに選択された食品カテゴリと食品名を記載
+    group_title = f"（{selected_group} - {selected_food}）" if selected_group != 'すべて' and selected_food != 'すべて' else \
+                f"（{selected_food}）" if selected_group == 'すべて' and selected_food != 'すべて' else \
+                f"（{selected_group}）" if selected_group != 'すべて' else "（すべての食品カテゴリと食品名）"
 
-# タイトルに選択された食品カテゴリと食品名を記載
-group_title = f"（{selected_group} - {selected_food}）" if selected_group != 'すべて' and selected_food != 'すべて' else \
-              f"（{selected_food}）" if selected_group == 'すべて' and selected_food != 'すべて' else \
-              f"（{selected_group}）" if selected_group != 'すべて' else "（すべての食品カテゴリと食品名）"
+    # 細菌ごとの検体数の合計を表示
+    st.subheader(f'細菌ごとの検体数{group_title}')
+    col1, col2 = st.columns(2)
 
-# 細菌ごとの検体数の合計を表示
-st.subheader(f'細菌ごとの検体数{group_title}')
-col1, col2 = st.columns(2)
+    with col1:
+        bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
+        bacteria_samplesize.columns = ['細菌名', '検体数']
+        st.dataframe(bacteria_samplesize, hide_index=True)
+        st.write('陽性率の可視化アプリは[こちら](%s)から' % app_ratio_url)
 
-with col1:
-    bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
-    bacteria_samplesize.columns = ['細菌名', '検体数']
-    st.dataframe(bacteria_samplesize, hide_index=True)
-    st.write('陽性率の可視化アプリは[こちら](%s)から' % app_ratio_url)
+    with col2:
+        fig1, ax1 = plt.subplots(figsize=(8,6))
+        ax1.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数'], color='skyblue')
+        ax1.set_xlabel('検体数', fontsize=size_label)
+        ax1.set_ylabel('細菌名', fontsize=size_label)
+        ax1.set_title(f'細菌ごとの検体数{group_title}', fontsize=size_title)
+        ax1.tick_params(axis='both', which='major', labelsize=size_label)
+        st.pyplot(fig1)
 
-with col2:
-    fig1, ax1 = plt.subplots(figsize=(8,6))
-    ax1.barh(bacteria_samplesize['細菌名'], bacteria_samplesize['検体数'], color='skyblue')
-    ax1.set_xlabel('検体数', fontsize=size_label)
-    ax1.set_ylabel('細菌名', fontsize=size_label)
-    ax1.set_title(f'細菌ごとの検体数{group_title}', fontsize=size_title)
-    ax1.tick_params(axis='both', which='major', labelsize=size_label)
-    st.pyplot(fig1)
+    st.write('-----------')
 
-st.write('-----------')
+    # すべての細菌の汚染濃度を表示
+    st.subheader(f'すべての細菌の汚染濃度{group_title}')
+    col3, col4 = st.columns(2)
 
-# すべての細菌の汚染濃度を表示
-st.subheader(f'すべての細菌の汚染濃度{group_title}')
-col3, col4 = st.columns(2)
+    with col3:
+        df_bacteria_counts = df_filtered.copy()
+        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
+        df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
+        st.dataframe(df_bacteria_counts, height=calc_df_height(df_bacteria_counts), hide_index=True)
 
-with col3:
-    df_bacteria_counts = df_filtered.copy()
-    df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
-    df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-    st.dataframe(df_bacteria_counts, height=calc_df_height(df_bacteria_counts), hide_index=True)
+        # 汚染濃度の平均と標本標準偏差の計算
+        mean_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
+        std_concentration = df_bacteria_counts['汚染濃度 [log CFU/g]'].std(ddof=1)
+        std_concentration = func_round(std_concentration, ndigits=2) if not pd.isna(std_concentration) else np.nan
+        # 平均と標準偏差の表示用データフレームを作成
+        stats_df = pd.DataFrame({
+            '平均 [log CFU/g]': [format_number(mean_concentration, ndigits=2)],
+            '標準偏差': [format_number(std_concentration, ndigits=2)]
+        })
+        # 統計情報を表示
+        st.dataframe(stats_df, hide_index=True)
 
-    # 汚染濃度の平均と標本標準偏差の計算
-    mean_concentration = func_round(df_bacteria_counts['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
-    std_concentration = df_bacteria_counts['汚染濃度 [log CFU/g]'].std(ddof=1)
-    std_concentration = func_round(std_concentration, ndigits=2) if not pd.isna(std_concentration) else np.nan
-    # 平均と標準偏差の表示用データフレームを作成
-    stats_df = pd.DataFrame({
-        '平均 [log CFU/g]': [format_number(mean_concentration, ndigits=2)],
-        '標準偏差': [format_number(std_concentration, ndigits=2)]
-    })
-    # 統計情報を表示
-    st.dataframe(stats_df, hide_index=True)
+    with col4:
+        fig2, ax2 = plt.subplots(figsize=(8, 6))
+        ax2.hist(df_filtered['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_filtered['汚染濃度_logCFU/g'].astype(float).min()), int(df_filtered['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+        ax2.set_xlim([0,10])
+        ax2.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
+        ax2.set_ylabel('頻度', fontsize=size_label)
+        ax2.set_title(f'汚染濃度の分布{group_title}', fontsize=size_title)
+        ax2.tick_params(axis='both', which='major', labelsize=size_label)
+        st.pyplot(fig2)
 
-with col4:
-    fig2, ax2 = plt.subplots(figsize=(8, 6))
-    ax2.hist(df_filtered['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_filtered['汚染濃度_logCFU/g'].astype(float).min()), int(df_filtered['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-    ax2.set_xlim([0,10])
-    ax2.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
-    ax2.set_ylabel('頻度', fontsize=size_label)
-    ax2.set_title(f'汚染濃度の分布{group_title}', fontsize=size_title)
-    ax2.tick_params(axis='both', which='major', labelsize=size_label)
-    st.pyplot(fig2)
+    # 特定の細菌のデータを取得
+    df_Campylobacter_counts = df_filtered[df_filtered['細菌名'].str.contains('Campylobacter')]
+    df_Listeria_counts = df_filtered[df_filtered['細菌名'].str.contains('Listeria')]
+    df_EHEC_counts = df_filtered[df_filtered['細菌名'].str.contains('Escherichia coli')]
+    df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
 
-# 特定の細菌のデータを取得
-df_Campylobacter_counts = df_filtered[df_filtered['細菌名'].str.contains('Campylobacter')]
-df_Listeria_counts = df_filtered[df_filtered['細菌名'].str.contains('Listeria')]
-df_EHEC_counts = df_filtered[df_filtered['細菌名'].str.contains('Escherichia coli')]
-df_Salmonella_counts = df_filtered[df_filtered['細菌名'].str.contains('Salmonella')]
+    # 各細菌のデータフレームとその行数をリストに格納
+    bacteria_data = [
+        ('カンピロバクター', df_Campylobacter_counts),
+        ('リステリア', df_Listeria_counts),
+        ('腸管出血性大腸菌', df_EHEC_counts),
+        ('サルモネラ', df_Salmonella_counts)
+    ]
 
-# 各細菌のデータフレームとその行数をリストに格納
-bacteria_data = [
-    ('カンピロバクター', df_Campylobacter_counts),
-    ('リステリア', df_Listeria_counts),
-    ('腸管出血性大腸菌', df_EHEC_counts),
-    ('サルモネラ', df_Salmonella_counts)
-]
+    # 行数が多い順にソート
+    bacteria_data.sort(key=lambda x: len(x[1]), reverse=True)
 
-# 行数が多い順にソート
-bacteria_data.sort(key=lambda x: len(x[1]), reverse=True)
+    # データ数が多い順に表示
+    for bacteria_name, df_bacteria in bacteria_data:
+        if not df_bacteria.empty:
+            st.write('-----------')
+            st.subheader(f'{bacteria_name}の汚染濃度{group_title}')
+            col5, col6 = st.columns(2)
 
-# データ数が多い順に表示
-for bacteria_name, df_bacteria in bacteria_data:
-    if not df_bacteria.empty:
-        st.write('-----------')
-        st.subheader(f'{bacteria_name}の汚染濃度{group_title}')
-        col5, col6 = st.columns(2)
+            with col5:
+                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
+                df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
+                st.dataframe(df_bacteria_conc, height=calc_df_height(df_bacteria_conc), hide_index=True)
 
-        with col5:
-            df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
-            df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
-            st.dataframe(df_bacteria_conc, height=calc_df_height(df_bacteria_conc), hide_index=True)
+                # 汚染濃度の平均と標本標準偏差の計算
+                mean_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
+                std_conc = df_bacteria_conc['汚染濃度 [log CFU/g]'].std(ddof=1)
+                std_conc = func_round(std_conc, ndigits=2) if not pd.isna(std_concentration) else np.nan
+                # 平均と標準偏差の表示用データフレームを作成
+                stats_df = pd.DataFrame({
+                    '平均 [log CFU/g]': [format_number(mean_conc, ndigits=2)],
+                    '標準偏差': [format_number(std_conc, ndigits=2)]
+                })
+                # 統計情報を表示
+                st.dataframe(stats_df, hide_index=True)
 
-            # 汚染濃度の平均と標本標準偏差の計算
-            mean_conc = func_round(df_bacteria_conc['汚染濃度 [log CFU/g]'].mean(), ndigits=2)
-            std_conc = df_bacteria_conc['汚染濃度 [log CFU/g]'].std(ddof=1)
-            std_conc = func_round(std_conc, ndigits=2) if not pd.isna(std_concentration) else np.nan
-            # 平均と標準偏差の表示用データフレームを作成
-            stats_df = pd.DataFrame({
-                '平均 [log CFU/g]': [format_number(mean_conc, ndigits=2)],
-                '標準偏差': [format_number(std_conc, ndigits=2)]
-            })
-            # 統計情報を表示
-            st.dataframe(stats_df, hide_index=True)
+            with col6:
+                fig3, ax3 = plt.subplots(figsize=(8, 6))
+                ax3.set_xlim([0,10])
+                ax3.hist(df_bacteria['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_bacteria['汚染濃度_logCFU/g'].astype(float).min()), int(df_bacteria['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
+                ax3.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
+                ax3.set_ylabel('頻度', fontsize=size_label)
+                ax3.set_title(f'{bacteria_name}の汚染濃度の分布{group_title}', fontsize=size_title)
+                ax3.tick_params(axis='both', which='major', labelsize=size_label)
+                st.pyplot(fig3)
 
-        with col6:
-            fig3, ax3 = plt.subplots(figsize=(8, 6))
-            ax3.set_xlim([0,10])
-            ax3.hist(df_bacteria['汚染濃度_logCFU/g'].astype(float), bins=range(int(df_bacteria['汚染濃度_logCFU/g'].astype(float).min()), int(df_bacteria['汚染濃度_logCFU/g'].astype(float).max()) + 2, 1), color='lightgreen', edgecolor='black')
-            ax3.set_xlabel('汚染濃度 [log CFU/g]', fontsize=size_label)
-            ax3.set_ylabel('頻度', fontsize=size_label)
-            ax3.set_title(f'{bacteria_name}の汚染濃度の分布{group_title}', fontsize=size_title)
-            ax3.tick_params(axis='both', which='major', labelsize=size_label)
-            st.pyplot(fig3)
-
-# 選択された食品カテゴリと食品名に該当するデータを表示
-st.write('-----------')
-st.subheader(f'選択された食品カテゴリと食品名に該当するデータ{group_title}')
-df_filtered.reset_index(inplace=True, drop=True)
-st.dataframe(df_filtered)
-st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
+    # 選択された食品カテゴリと食品名に該当するデータを表示
+    st.write('-----------')
+    st.subheader(f'選択された食品カテゴリと食品名に該当するデータ{group_title}')
+    df_filtered.reset_index(inplace=True, drop=True)
+    st.dataframe(df_filtered)
+    st.write("*現在報告書から取得した統計処理済みの文献値（最大値・最小値・平均値など）が混在しているためグラフは参考。今後データ収集を行い分布を可視化していく")
