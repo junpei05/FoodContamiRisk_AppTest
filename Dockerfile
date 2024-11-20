@@ -15,4 +15,4 @@ COPY . /app
 
 ENTRYPOINT ["streamlit", "run"]
 
-CMD ["risk_conc_hosoe_prototype1.py", "risk_concentration_test_JH.py"]
+CMD ["risk_concentration_test_JH.py"]
