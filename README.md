@@ -29,7 +29,7 @@
 ## 使い方
 
 1. **アプリケーションにアクセス**
-   - [こちらのURL](https://m7gk8u5qjmoysfsmf5kgqk.streamlit.app/)からアプリケーションを開きます。
+   - [こちらのURL](https://foodcontamiriskapptest-snhhv2zpvszwfmbm6kwhhm.streamlit.app/)からアプリケーションを開きます。
 
 2. **サイドバーの操作**
    - **食品カテゴリを選択**: 「すべて」または特定のカテゴリを選択します。
