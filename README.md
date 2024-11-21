@@ -1,6 +1,6 @@
 # 食中毒細菌数可視化ソフトウェア
 
-この[ソフトウェア](https://foodcontamiriskapptest-snhhv2zpvszwfmbm6kwhhm.streamlit.app/)は、[食中毒細菌に関するばく露評価のDX化に向けた情報整理](https://github.com/kento-koyama/food_micro_data_risk) にある **食中毒細菌の汚染濃度** に関する統計データを簡単に可視化できるアプリケーションです。食品中の細菌の汚染濃度に関するデータを直感的に操作し、理解しやすい形で表示します。
+この[ソフトウェア](https://foodcontamiriskapptest-snhhv2zpvszwfmbm6kwhhm.streamlit.app/)は、[日本国内における食中毒細菌に関するばく露評価の定量的データまとめ](https://github.com/kento-koyama/food_micro_data_risk) にある **食中毒細菌の汚染濃度** に関する統計データを簡単に可視化できるアプリケーションです。食品中の細菌の汚染濃度に関するデータを直感的に操作し、理解しやすい形で表示します。
 
 ---
 ## 主な機能
