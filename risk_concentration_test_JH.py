@@ -24,8 +24,11 @@ def convert_to_mpn_per_g(row):
         match = re.search(r'MPN/(\d+)g', row['単位'])
         if match:
             weight = int(match.group(1))  # 重量部分を取得
-            return row['汚染濃度'] / weight  # 重量で割ってMPN/gに変換
+        else:
+            weight = 1  # 'MPN/g' の場合は重さを 1 に設定
+        return row['汚染濃度'] / weight  # 重量で割ってMPN/gに変換
     return np.nan  # 該当しない場合はNaN
+
 
 # 表示用フォーマット関数
 def format_number(number, ndigits=0):
