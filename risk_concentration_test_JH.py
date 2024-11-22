@@ -123,7 +123,7 @@ df['汚染濃度_logCFU/g'] = np.where(
 
 # 小数点以下を2桁に丸める
 df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2))
-df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,16,11,12,13,14,15]]
+df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,16,15,11,12,13,14]]
 
 # サイドバーで食品カテゴリを選択
 categories = ['すべて'] + list(df['食品カテゴリ'].unique())
@@ -183,7 +183,7 @@ else:
 
     with col3:
         df_bacteria_counts = df_filtered.copy()
-        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
+        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 6, 7]]
         df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
         st.dataframe(df_bacteria_counts, height=calc_df_height(df_bacteria_counts), hide_index=True)
 
@@ -234,7 +234,7 @@ else:
             col5, col6 = st.columns(2)
 
             with col5:
-                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
+                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 6, 7]]
                 df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
                 st.dataframe(df_bacteria_conc, height=calc_df_height(df_bacteria_conc), hide_index=True)
 
