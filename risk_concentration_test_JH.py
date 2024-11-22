@@ -102,6 +102,7 @@ df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚�
 
 # 汚染濃度を数値型に変換（変換できない値はNaNに）
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')
+df = df[~((df['汚染濃度'].isna()))]
 
 # MPNを1gあたりに統一
 df['汚染濃度_MPN/g'] = df.apply(
