@@ -13,6 +13,19 @@ def func_round(number, ndigits=0):
     p = 10 ** ndigits
     return float(int(number * p + 0.5) / p)
 
+# 単位から重量を抽出してMPN/gに変換
+def convert_to_mpn_per_g(row):
+    """
+    単位のフォーマットに応じて汚染濃度をMPN/gに変換する
+    """
+    if isinstance(row['単位'], str) and 'MPN/' in row['単位']:
+        # 単位から基準重量を抽出 (例: 'MPN/100g' -> 100)
+        match = re.search(r'MPN/(\d+)g', row['単位'])
+        if match:
+            weight = int(match.group(1))  # 重量部分を取得
+            return row['汚染濃度'] / weight  # 重量で割ってMPN/gに変換
+    return np.nan  # 該当しない場合はNaN
+
 # 表示用フォーマット関数
 def format_number(number, ndigits=0):
     formatted = f"{number:.{ndigits}f}".rstrip('0').rstrip('.')
@@ -74,13 +87,34 @@ df = df[~((df['汚染濃度'] == '不検出') | (df['汚染濃度'] == '-') | (d
 # 食品カテゴリと食品名が共にNaNの行を除外
 df = df[~(df['食品カテゴリ'].isna() & df['食品名'].isna())]
 # 単位を指定
-df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')]
+df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')| (df['検査方法'] == 'MPN')]
 
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
-df['汚染濃度_logCFU/g'] = np.where(df['単位'] == 'CFU/g', np.log10(df['汚染濃度']), df['汚染濃度'])
+
+# 汚染濃度を数値型に変換（変換できない値はNaNに）
+df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')
+
+# MPNを1gあたりに統一
+df['汚染濃度_MPN/g'] = df.apply(
+    lambda row: convert_to_mpn_per_g(row) if 'MPN' in str(row['単位']) else np.nan, 
+    axis=1
+)
+
+# 汚染濃度_logCFU/gの計算
+df['汚染濃度_logCFU/g'] = np.where(
+    df['単位'].str.contains('MPN', na=False),  # 単位がMPNの場合
+    np.log10(df['汚染濃度_MPN/g']),  # MPNを常用対数に変換
+    np.where(
+        df['単位'] == 'CFU/g',  # 単位がCFUの場合
+        np.log10(df['汚染濃度']),  # CFUを常用対数に変換
+        df['汚染濃度']  # その他（例: log CFU/g）はそのまま利用
+    )
+)
+
+# 小数点以下を2桁に丸める
 df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2))
-df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,15,11,12,13,14]]
+df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,16,11,12,13,14,15]]
 
 # サイドバーで食品カテゴリを選択
 categories = ['すべて'] + list(df['食品カテゴリ'].unique())
