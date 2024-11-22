@@ -83,8 +83,12 @@ plt.rcParams['font.family'] = font_prop.get_name()
 # データの読み込み
 df = pd.read_csv(csv_url, encoding='utf-8-sig')
 
-# log CFU/g のみ、汚染濃度が '不検出' または '-' のものを除外
-df = df[~((df['汚染濃度'] == '不検出') | (df['汚染濃度'] == '-') | (df['汚染濃度'] == np.nan))]
+# "不検出" または "-" または NaN または "<" または "未満" を含む値を除外
+df = df[~((df['汚染濃度'] == '不検出') | 
+          (df['汚染濃度'] == '-') | 
+          (df['汚染濃度'].isna()) | 
+          (df['汚染濃度'].astype(str).str.contains('<')) | 
+          (df['汚染濃度'].astype(str).str.contains('未満')))]
 # 食品カテゴリと食品名が共にNaNの行を除外
 df = df[~(df['食品カテゴリ'].isna() & df['食品名'].isna())]
 # 単位を指定
