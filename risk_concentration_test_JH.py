@@ -183,7 +183,7 @@ else:
 
     with col3:
         df_bacteria_counts = df_filtered.copy()
-        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 6, 7]]
+        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
         df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
         st.dataframe(df_bacteria_counts, height=calc_df_height(df_bacteria_counts), hide_index=True)
 
@@ -234,7 +234,7 @@ else:
             col5, col6 = st.columns(2)
 
             with col5:
-                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 6, 7]]
+                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
                 df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
                 st.dataframe(df_bacteria_conc, height=calc_df_height(df_bacteria_conc), hide_index=True)
 
