@@ -88,6 +88,7 @@ df = pd.read_csv(csv_url, encoding='utf-8-sig')
 
 # "不検出" または "-" または NaN または "<" または "未満" を含む値を除外
 df = df[~((df['汚染濃度'] == '不検出') | 
+          (df['汚染濃度'] == '未検出') | 
           (df['汚染濃度'] == '-') | 
           (df['汚染濃度'].isna()) | 
           (df['汚染濃度'].astype(str).str.contains('<')) | 
@@ -95,7 +96,7 @@ df = df[~((df['汚染濃度'] == '不検出') |
 # 食品カテゴリと食品名が共にNaNの行を除外
 df = df[~(df['食品カテゴリ'].isna() & df['食品名'].isna())]
 # 単位を指定
-df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')| (df['検査方法'] == 'MPN')]
+df = df[(df['単位'] == 'log CFU/g')|(df['単位'] == 'CFU/g')|(df['検査方法'] == 'MPN')]
 
 # グラフ用の汚染濃度列を作成し、桁丸めを適用
 df['汚染濃度'] = pd.to_numeric(df['汚染濃度'], errors='coerce')  # 汚染濃度を数値に変換（エラーをNaNに設定）
