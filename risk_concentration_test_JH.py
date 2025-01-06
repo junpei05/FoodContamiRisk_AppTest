@@ -124,7 +124,11 @@ df['汚染濃度_logCFU/g'] = np.where(
 
 # 小数点以下を2桁に丸める
 df['汚染濃度_logCFU/g'] = df['汚染濃度_logCFU/g'].apply(lambda x: func_round(x, ndigits=2))
-df = df.iloc[:, [0,1,2,3,4,5,6,7,8,9,10,16,15,11,12,13,14]]
+# 細菌名を"Campylobacter spp."でまとめる
+df['細菌名_詳細'] = df['細菌名']
+df['細菌名'] = df['細菌名'].apply(lambda x: 'Campylobacter spp.' if 'Campylobacter' in str(x) else x)
+
+df = df.iloc[:, [0,1,2,3,4,5,6,7,8,17,9,10,16,15,11,12,13,14]]
 
 # サイドバーで食品カテゴリを選択
 categories = ['すべて'] + list(df['食品カテゴリ'].unique())
@@ -165,7 +169,6 @@ else:
         bacteria_samplesize = df_filtered['細菌名'].value_counts().reset_index()
         bacteria_samplesize.columns = ['細菌名', '検体数']
         st.dataframe(bacteria_samplesize, hide_index=True)
-        st.write('陽性率の可視化アプリは[こちら](%s)から' % app_ratio_url)
 
     with col2:
         fig1, ax1 = plt.subplots(figsize=(8,6))
@@ -184,7 +187,7 @@ else:
 
     with col3:
         df_bacteria_counts = df_filtered.copy()
-        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 11, 5, 6]]
+        df_bacteria_counts = df_bacteria_counts.iloc[:, [0, 8, 12, 5, 6]]
         df_bacteria_counts.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
         st.dataframe(df_bacteria_counts, height=calc_df_height(df_bacteria_counts), hide_index=True)
 
@@ -235,7 +238,7 @@ else:
             col5, col6 = st.columns(2)
 
             with col5:
-                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 11, 5, 6]]
+                df_bacteria_conc = df_bacteria.iloc[:, [0, 8, 12, 5, 6]]
                 df_bacteria_conc.columns = ['調査年', '細菌名', '汚染濃度 [log CFU/g]', '食品名', '食品詳細']
                 st.dataframe(df_bacteria_conc, height=calc_df_height(df_bacteria_conc), hide_index=True)
 
