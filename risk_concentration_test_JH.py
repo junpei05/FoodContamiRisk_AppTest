@@ -64,6 +64,9 @@ elif selected_food == 'すべて':
 else:
     df_filtered = pd.DataFrame()  # 選択肢が"入力 または 選択"の場合は空のデータフレーム
 
+st.write("df_filtered の現在のカラム:", df_filtered.columns.tolist())
+st.write("df_filtered の現在のデータ数:", len(df_filtered))
+
 # サイドバーで細菌名を選択
 bacteria_names = df_filtered['細菌名'].unique() if not df_filtered.empty else []  # データが空の場合、細菌名リストも空にする
 options_bacteria = ['入力 または 選択'] + ['すべて'] + list(bacteria_names)  # 初期値として表示するオプションを追加
