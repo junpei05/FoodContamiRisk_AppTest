@@ -73,8 +73,18 @@ selected_bacteria = st.sidebar.selectbox(
     key="bacteria_selected"
 )
 
+# 未選択項目を自動的に "すべて" に設定
+if selected_group == "" and (selected_food != "" or selected_bacteria != ""):
+    selected_group = "すべて"
+if selected_food == "" and (selected_group != "" or selected_bacteria != ""):
+    selected_food = "すべて"
+if selected_bacteria == "" and (selected_group != "" or selected_food != ""):
+    selected_bacteria = "すべて"
+
 # データをフィルタリング（細菌名に基づく）
-df_filtered = df_filtered if selected_bacteria == "" or selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
+df_filtered = df if selected_group == "すべて" else df[df['食品カテゴリ'] == selected_group]
+df_filtered = df_filtered if selected_food == "すべて" else df_filtered[df_filtered['食品名'] == selected_food]
+df_filtered = df_filtered if selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
 
 # 表示条件を確認して出力制御
 if selected_group == "" and selected_food == "" and selected_bacteria == "":
