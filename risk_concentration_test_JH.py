@@ -90,54 +90,55 @@ df_filtered = df_filtered if selected_bacteria == "すべて" else df_filtered[d
 if selected_group == "" and selected_food == "" and selected_bacteria == "":
     st.warning("入力または選択を行ってください。")
 else:
-    # 細菌ごとの検体数と陽性数の合計を計算
-    bacteria_counts = df_filtered.groupby('細菌名').agg({'検体数': 'sum', '陽性数': 'sum'}).reset_index()
+    if selected_bacteria == "すべて":  # 細菌名の絞り込みがない場合に表示
+        # 細菌ごとの検体数と陽性数の合計を計算
+        bacteria_counts = df_filtered.groupby('細菌名').agg({'検体数': 'sum', '陽性数': 'sum'}).reset_index()
 
-    # カラム名の変更
-    bacteria_counts.columns = ['バクテリア名', '検体数', '陽性数']
+        # カラム名の変更
+        bacteria_counts.columns = ['バクテリア名', '検体数', '陽性数']
 
-    # タイトルに選択された食品カテゴリと食品名を記載
-    group_title = f"（{selected_group} - {selected_food} - {selected_bacteria}）" if selected_group != 'すべて' or selected_food != 'すべて' or selected_bacteria != 'すべて' else "（すべて）"
+        # タイトルに選択された食品カテゴリと食品名を記載
+        group_title = f"（{selected_group} - {selected_food} - {selected_bacteria}）" if selected_group != 'すべて' or selected_food != 'すべて' else "（すべて）"
 
-    # サイドバイサイドのレイアウト for 検体数
-    col1, col2 = st.columns(2)
+        # サイドバイサイドのレイアウト for 検体数
+        col1, col2 = st.columns(2)
 
-    with col1:
-        st.write(f'細菌別の食品検体数 {group_title}')
-        st.dataframe(bacteria_counts[['バクテリア名', '検体数']], hide_index=True)
+        with col1:
+            st.write(f'細菌別の食品検体数 {group_title}')
+            st.dataframe(bacteria_counts[['バクテリア名', '検体数']], hide_index=True)
 
-    with col2:
-        fig1, ax1 = plt.subplots(figsize=(6, 6))
-        ax1.barh(bacteria_counts['バクテリア名'], bacteria_counts['検体数'], color='skyblue')
-        ax1.set_xlabel('検体数', fontsize=18)
-        ax1.set_ylabel('細菌名', fontsize=18)
-        ax1.set_title(f'細菌別の食品検体数 {group_title}', fontsize=20)
-        ax1.tick_params(axis='both', which='major', labelsize=18)
-        ax1.invert_yaxis()
-        st.pyplot(fig1)
+        with col2:
+            fig1, ax1 = plt.subplots(figsize=(6, 6))
+            ax1.barh(bacteria_counts['バクテリア名'], bacteria_counts['検体数'], color='skyblue')
+            ax1.set_xlabel('検体数', fontsize=18)
+            ax1.set_ylabel('細菌名', fontsize=18)
+            ax1.set_title(f'細菌別の食品検体数 {group_title}', fontsize=20)
+            ax1.tick_params(axis='both', which='major', labelsize=18)
+            ax1.invert_yaxis()
+            st.pyplot(fig1)
 
-    st.write('-----------')
+        st.write('-----------')
 
-    # 陽性割合を計算
-    bacteria_counts['陽性率 (%)'] = bacteria_counts['陽性数'] / bacteria_counts['検体数'] * 100
+        # 陽性割合を計算
+        bacteria_counts['陽性率 (%)'] = bacteria_counts['陽性数'] / bacteria_counts['検体数'] * 100
 
-    col3, col4 = st.columns(2)
+        col3, col4 = st.columns(2)
 
-    with col3:
-        st.write(f'細菌の陽性率 {group_title}')
-        st.dataframe(bacteria_counts[['バクテリア名', '陽性率 (%)']], hide_index=True)
+        with col3:
+            st.write(f'細菌の陽性率 {group_title}')
+            st.dataframe(bacteria_counts[['バクテリア名', '陽性率 (%)']], hide_index=True)
 
-    with col4:
-        fig2, ax2 = plt.subplots(figsize=(6, 6))
-        ax2.barh(bacteria_counts['バクテリア名'], bacteria_counts['陽性率 (%)'], color='skyblue')
-        ax2.set_xlabel('陽性率 (%)', fontsize=18)
-        ax2.set_ylabel('細菌名', fontsize=18)
-        ax2.set_title(f'細菌の陽性率 {group_title}', fontsize=20)
-        ax2.tick_params(axis='both', which='major', labelsize=18)
-        ax2.invert_yaxis()
-        st.pyplot(fig2)
+        with col4:
+            fig2, ax2 = plt.subplots(figsize=(6, 6))
+            ax2.barh(bacteria_counts['バクテリア名'], bacteria_counts['陽性率 (%)'], color='skyblue')
+            ax2.set_xlabel('陽性率 (%)', fontsize=18)
+            ax2.set_ylabel('細菌名', fontsize=18)
+            ax2.set_title(f'細菌の陽性率 {group_title}', fontsize=20)
+            ax2.tick_params(axis='both', which='major', labelsize=18)
+            ax2.invert_yaxis()
+            st.pyplot(fig2)
 
-    st.write('-----------')
+        st.write('-----------')
 
     # 選択されたカテゴリと食品名に基づくデータの表示
     st.write(f'選択された食品カテゴリと食品名に該当するデータ {group_title}')
