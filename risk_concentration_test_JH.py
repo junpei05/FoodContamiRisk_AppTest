@@ -40,6 +40,7 @@ df['細菌名'] = df['細菌名'].apply(lambda x: 'Campylobacter spp.' if 'Campy
 food_groups = [""] + ["すべて"] + list(df['食品カテゴリ'].unique())
 food_names = [""] + ["すべて"] + list(df['食品名'].unique())
 bacteria_names = [""] + ["すべて"] + list(df['細菌名'].unique())
+institutions = [""] + ["すべて"] + list(df['実施機関'].unique())  # 実施機関の選択肢
 
 # サイドバーで食品カテゴリを選択
 selected_group = st.sidebar.selectbox(
@@ -73,24 +74,36 @@ selected_bacteria = st.sidebar.selectbox(
     key="bacteria_selected"
 )
 
-# 未選択項目を自動的に "すべて" に設定
-if selected_group == "" and (selected_food != "" or selected_bacteria != ""):
-    selected_group = "すべて"
-if selected_food == "" and (selected_group != "" or selected_bacteria != ""):
-    selected_food = "すべて"
-if selected_bacteria == "" and (selected_group != "" or selected_food != ""):
-    selected_bacteria = "すべて"
-
 # データをフィルタリング（細菌名に基づく）
-df_filtered = df if selected_group == "すべて" else df[df['食品カテゴリ'] == selected_group]
-df_filtered = df_filtered if selected_food == "すべて" else df_filtered[df_filtered['食品名'] == selected_food]
-df_filtered = df_filtered if selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
+df_filtered = df_filtered if selected_bacteria == "" or selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
+
+# サイドバーで実施機関を選択
+institutions_filtered = [""] + ["すべて"] + list(df_filtered['実施機関'].unique())
+selected_institution = st.sidebar.selectbox(
+    '実施機関を入力/選択してください:',
+    institutions_filtered,
+    format_func=lambda x: "入力 または 選択" if x == "" else x,
+    key="institution_selected"
+)
+
+# データをフィルタリング（実施機関に基づく）
+df_filtered = df_filtered if selected_institution == "" or selected_institution == "すべて" else df_filtered[df_filtered['実施機関'] == selected_institution]
+
+# 未選択項目を自動的に "すべて" に設定
+if selected_group == "" and (selected_food != "" or selected_bacteria != "" or selected_institution != ""):
+    selected_group = "すべて"
+if selected_food == "" and (selected_group != "" or selected_bacteria != "" or selected_institution != ""):
+    selected_food = "すべて"
+if selected_bacteria == "" and (selected_group != "" or selected_food != "" or selected_institution != ""):
+    selected_bacteria = "すべて"
+if selected_institution == "" and (selected_group != "" or selected_food != "" or selected_bacteria != ""):
+    selected_institution = "すべて"
 
 # 常に group_title を定義
-group_title = f"（{selected_group} - {selected_food} - {selected_bacteria}）" if selected_group != 'すべて' or selected_food != 'すべて' or selected_bacteria != 'すべて' else "（すべて）"
+group_title = f"（{selected_group} - {selected_food} - {selected_bacteria} - {selected_institution}）" if selected_group != 'すべて' or selected_food != 'すべて' or selected_bacteria != 'すべて' or selected_institution != 'すべて' else "（すべて）"
 
 # 表示条件を確認して出力制御
-if selected_group == "" and selected_food == "" and selected_bacteria == "":
+if selected_group == "" and selected_food == "" and selected_bacteria == "" and selected_institution == "":
     st.warning("入力または選択を行ってください。")
 else:
     if selected_bacteria == "すべて":  # 細菌名の絞り込みがない場合に表示
