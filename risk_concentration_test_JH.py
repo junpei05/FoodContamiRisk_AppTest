@@ -37,24 +37,13 @@ df = df[df['検体数'].notna() & df['陽性数'].notna()]
 df['細菌名_詳細'] = df['細菌名']
 df['細菌名'] = df['細菌名'].apply(lambda x: 'Campylobacter spp.' if 'Campylobacter' in str(x) else x)
 
-# サイドバーで食品カテゴリを選択
-food_groups = df['食品カテゴリ'].unique()
-options_group = ['入力 または 選択'] + ['すべて'] + list(food_groups)
-selected_group = st.sidebar.selectbox('食品カテゴリを入力/選択してください:', options_group, index=0)
+# 初期値として選択状況を管理する変数
+selected_group = st.sidebar.selectbox('食品カテゴリを入力/選択してください:', ['入力 または 選択'] + ['すべて'] + list(df['食品カテゴリ'].unique()), index=0)
+selected_food = st.sidebar.selectbox('食品名を入力/選択してください:', ['入力 または 選択'], index=0)
+selected_bacteria = st.sidebar.selectbox('細菌名を入力/選択してください:', ['入力 または 選択'], index=0)
 
-# サイドバーで食品名を選択
-food_names = df['食品名'].unique()
-options_food = ['入力 または 選択'] + ['すべて'] + list(food_names)
-selected_food = st.sidebar.selectbox('食品名を入力/選択してください:', options_food, index=0)
-
-# サイドバーで細菌名を選択
-bacteria_names = df['細菌名'].unique()
-options_bacteria = ['入力 または 選択'] + ['すべて'] + list(bacteria_names)
-selected_bacteria = st.sidebar.selectbox('細菌名を入力/選択してください:', options_bacteria, index=0)
-
-# 入力チェック: 少なくとも1つが選択されているか
+# 未選択の項目を「すべて」に設定するロジック
 if selected_group != "入力 または 選択" or selected_food != "入力 または 選択" or selected_bacteria != "入力 または 選択":
-    # 未選択の項目を "すべて" に設定
     if selected_group == "入力 または 選択":
         selected_group = "すべて"
     if selected_food == "入力 または 選択":
@@ -62,24 +51,75 @@ if selected_group != "入力 または 選択" or selected_food != "入力 ま�
     if selected_bacteria == "入力 または 選択":
         selected_bacteria = "すべて"
 
-    # フィルタリング処理
-    df_filtered = df.copy()
-    if selected_group != "すべて":
-        df_filtered = df_filtered[df_filtered['食品カテゴリ'] == selected_group]
-    if selected_food != "すべて":
-        df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
-    if selected_bacteria != "すべて":
-        df_filtered = df_filtered[df_filtered['細菌名'] == selected_bacteria]
+# データのフィルタリング
+df_filtered = df.copy()
+if selected_group != "すべて":
+    df_filtered = df_filtered[df_filtered['食品カテゴリ'] == selected_group]
+if selected_food != "すべて":
+    df_filtered = df_filtered[df_filtered['食品名'] == selected_food]
+if selected_bacteria != "すべて":
+    df_filtered = df_filtered[df_filtered['細菌名'] == selected_bacteria]
 
+# 表示条件を確認して出力制御
+if selected_group == "入力 または 選択" and selected_food == "入力 または 選択" and selected_bacteria == "入力 または 選択":
+    st.warning("入力または選択を行ってください。")
+else:
     # 細菌ごとの検体数と陽性数の合計を計算
     bacteria_counts = df_filtered.groupby('細菌名').agg({'検体数': 'sum', '陽性数': 'sum'}).reset_index()
+
+    # カラム名の変更
     bacteria_counts.columns = ['バクテリア名', '検体数', '陽性数']
 
-    # 表やグラフを表示
-    st.write(f"選択条件: 食品カテゴリ = {selected_group}, 食品名 = {selected_food}, 細菌名 = {selected_bacteria}")
-    st.write('細菌ごとの検体数')
-    st.dataframe(bacteria_counts)
+    # タイトルに選択された食品カテゴリと食品名を記載
+    group_title = f"（{selected_group} - {selected_food} - {selected_bacteria}）" if selected_group != 'すべて' or selected_food != 'すべて' or selected_bacteria != 'すべて' else "（すべて）"
 
-else:
-    # 入力が全く行われていない場合
-    st.warning("少なくとも1つの項目を入力または選択してください。")
+    # サイドバイサイドのレイアウト for 検体数
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write(f'細菌別の食品検体数 {group_title}')
+        st.dataframe(bacteria_counts[['バクテリア名', '検体数']], hide_index=True)
+
+    with col2:
+        fig1, ax1 = plt.subplots(figsize=(6, 6))
+        ax1.barh(bacteria_counts['バクテリア名'], bacteria_counts['検体数'], color='skyblue')
+        ax1.set_xlabel('検体数', fontsize=18)
+        ax1.set_ylabel('細菌名', fontsize=18)
+        ax1.set_title(f'細菌別の食品検体数 {group_title}', fontsize=20)
+        ax1.tick_params(axis='both', which='major', labelsize=18)
+        ax1.invert_yaxis()
+        st.pyplot(fig1)
+
+    st.write('-----------')
+
+    # 陽性割合を計算
+    bacteria_counts['陽性率 (%)'] = bacteria_counts['陽性数'] / bacteria_counts['検体数'] * 100
+
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.write(f'細菌の陽性率 {group_title}')
+        st.dataframe(bacteria_counts[['バクテリア名', '陽性率 (%)']], hide_index=True)
+
+    with col4:
+        fig2, ax2 = plt.subplots(figsize=(6, 6))
+        ax2.barh(bacteria_counts['バクテリア名'], bacteria_counts['陽性率 (%)'], color='skyblue')
+        ax2.set_xlabel('陽性率 (%)', fontsize=18)
+        ax2.set_ylabel('細菌名', fontsize=18)
+        ax2.set_title(f'細菌の陽性率 {group_title}', fontsize=20)
+        ax2.tick_params(axis='both', which='major', labelsize=18)
+        ax2.invert_yaxis()
+        st.pyplot(fig2)
+
+    st.write('-----------')
+
+    # 選択されたカテゴリと食品名に基づくデータの表示
+    st.write(f'選択された食品カテゴリと食品名に該当するデータ {group_title}')
+    st.dataframe(df_filtered, hide_index=True)
+
+    st.write('-----------')
+
+    # 陽性数が1以上のデータをフィルタリングして表示
+    positive_df = df_filtered[df_filtered['陽性数'] >= 1]
+    st.write(f'陽性数が1以上のデータ {group_title}')
+    st.dataframe(positive_df, hide_index=True)
