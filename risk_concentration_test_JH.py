@@ -37,53 +37,47 @@ df['細菌名_詳細'] = df['細菌名']
 df['細菌名'] = df['細菌名'].apply(lambda x: 'Campylobacter spp.' if 'Campylobacter' in str(x) else x)
 
 # 初期状態の選択肢
-food_groups = ['すべて'] + list(df['食品カテゴリ'].unique())
-food_names = ['すべて'] + list(df['食品名'].unique())
-bacteria_names = ['すべて'] + list(df['細菌名'].unique())
+food_groups = [""] + ["すべて"] + list(df['食品カテゴリ'].unique())
+food_names = [""] + ["すべて"] + list(df['食品名'].unique())
+bacteria_names = [""] + ["すべて"] + list(df['細菌名'].unique())
 
 # サイドバーで食品カテゴリを選択
 selected_group = st.sidebar.selectbox(
     '食品カテゴリを入力/選択してください:',
     food_groups,
-    index=0,
-    format_func=lambda x: x,
-    key="group_selected",
-    placeholder="入力 または 選択"
+    format_func=lambda x: "入力 または 選択" if x == "" else x,
+    key="group_selected"
 )
 
 # データをフィルタリング（食品カテゴリに基づく）
-df_filtered = df if selected_group == "すべて" else df[df['食品カテゴリ'] == selected_group]
+df_filtered = df if selected_group == "" or selected_group == "すべて" else df[df['食品カテゴリ'] == selected_group]
 
 # サイドバーで食品名を選択
-food_names_filtered = ['すべて'] + list(df_filtered['食品名'].unique())
+food_names_filtered = [""] + ["すべて"] + list(df_filtered['食品名'].unique())
 selected_food = st.sidebar.selectbox(
     '食品名を入力/選択してください:',
     food_names_filtered,
-    index=0,
-    format_func=lambda x: x,
-    key="food_selected",
-    placeholder="入力 または 選択"
+    format_func=lambda x: "入力 または 選択" if x == "" else x,
+    key="food_selected"
 )
 
 # データをフィルタリング（食品名に基づく）
-df_filtered = df_filtered if selected_food == "すべて" else df_filtered[df_filtered['食品名'] == selected_food]
+df_filtered = df_filtered if selected_food == "" or selected_food == "すべて" else df_filtered[df_filtered['食品名'] == selected_food]
 
 # サイドバーで細菌名を選択
-bacteria_names_filtered = ['すべて'] + list(df_filtered['細菌名'].unique())
+bacteria_names_filtered = [""] + ["すべて"] + list(df_filtered['細菌名'].unique())
 selected_bacteria = st.sidebar.selectbox(
     '細菌名を入力/選択してください:',
     bacteria_names_filtered,
-    index=0,
-    format_func=lambda x: x,
-    key="bacteria_selected",
-    placeholder="入力 または 選択"
+    format_func=lambda x: "入力 または 選択" if x == "" else x,
+    key="bacteria_selected"
 )
 
 # データをフィルタリング（細菌名に基づく）
-df_filtered = df_filtered if selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
+df_filtered = df_filtered if selected_bacteria == "" or selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
 
 # 表示条件を確認して出力制御
-if not any([selected_group != "すべて", selected_food != "すべて", selected_bacteria != "すべて"]):
+if selected_group == "" and selected_food == "" and selected_bacteria == "":
     st.warning("入力または選択を行ってください。")
 else:
     # 細菌ごとの検体数と陽性数の合計を計算
