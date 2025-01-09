@@ -86,6 +86,9 @@ df_filtered = df if selected_group == "すべて" else df[df['食品カテゴリ
 df_filtered = df_filtered if selected_food == "すべて" else df_filtered[df_filtered['食品名'] == selected_food]
 df_filtered = df_filtered if selected_bacteria == "すべて" else df_filtered[df_filtered['細菌名'] == selected_bacteria]
 
+# 常に group_title を定義
+group_title = f"（{selected_group} - {selected_food} - {selected_bacteria}）" if selected_group != 'すべて' or selected_food != 'すべて' or selected_bacteria != 'すべて' else "（すべて）"
+
 # 表示条件を確認して出力制御
 if selected_group == "" and selected_food == "" and selected_bacteria == "":
     st.warning("入力または選択を行ってください。")
@@ -96,9 +99,6 @@ else:
 
         # カラム名の変更
         bacteria_counts.columns = ['バクテリア名', '検体数', '陽性数']
-
-        # タイトルに選択された食品カテゴリと食品名を記載
-        group_title = f"（{selected_group} - {selected_food} - {selected_bacteria}）" if selected_group != 'すべて' or selected_food != 'すべて' else "（すべて）"
 
         # サイドバイサイドのレイアウト for 検体数
         col1, col2 = st.columns(2)
