@@ -46,8 +46,9 @@ selected_group = st.sidebar.selectbox(
     '食品カテゴリを入力/選択してください:',
     food_groups,
     index=0,
-    format_func=lambda x: "入力 または 選択" if x == "すべて" else x,
-    key="group_selected"
+    format_func=lambda x: x,
+    key="group_selected",
+    placeholder="入力 または 選択"
 )
 
 # データをフィルタリング（食品カテゴリに基づく）
@@ -59,8 +60,9 @@ selected_food = st.sidebar.selectbox(
     '食品名を入力/選択してください:',
     food_names_filtered,
     index=0,
-    format_func=lambda x: "入力 または 選択" if x == "すべて" else x,
-    key="food_selected"
+    format_func=lambda x: x,
+    key="food_selected",
+    placeholder="入力 または 選択"
 )
 
 # データをフィルタリング（食品名に基づく）
@@ -72,8 +74,9 @@ selected_bacteria = st.sidebar.selectbox(
     '細菌名を入力/選択してください:',
     bacteria_names_filtered,
     index=0,
-    format_func=lambda x: "入力 または 選択" if x == "すべて" else x,
-    key="bacteria_selected"
+    format_func=lambda x: x,
+    key="bacteria_selected",
+    placeholder="入力 または 選択"
 )
 
 # データをフィルタリング（細菌名に基づく）
