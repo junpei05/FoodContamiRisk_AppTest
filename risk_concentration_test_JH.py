@@ -138,7 +138,7 @@ institutions = [""] + ["すべて"] + list(df['実施機関'].unique())
 
 # サイドバーで食品カテゴリを選択
 selected_group = st.sidebar.selectbox(
-    '食品カテゴリを入力 または 選択してください:',
+    '食品カテゴリを入力/選択してください:',
     food_categories,
     format_func=lambda x: "" if x == "" else x,
     key="category_selected"
@@ -150,7 +150,7 @@ df_filtered = df if selected_group == "" or selected_group == "すべて" else d
 # サイドバーで食品名を選択
 food_names_filtered = [""] + ["すべて"] + list(df_filtered['食品名'].unique())
 selected_food = st.sidebar.selectbox(
-    '食品名を入力 または 選択してください:',
+    '食品名を入力/選択してください:',
     food_names_filtered,
     format_func=lambda x: "" if x == "" else x,
     key="food_selected"
@@ -162,7 +162,7 @@ df_filtered = df_filtered if selected_food == "" or selected_food == "すべて"
 # サイドバーで細菌名を選択
 bacteria_names_filtered = [""] + ["すべて"] + list(df_filtered['細菌名'].unique())
 selected_bacteria = st.sidebar.selectbox(
-    '細菌名を入力 または 選択してください:',
+    '細菌名を入力/選択してください:',
     bacteria_names_filtered,
     format_func=lambda x: "" if x == "" else x,
     key="bacteria_selected"
@@ -174,7 +174,7 @@ df_filtered = df_filtered if selected_bacteria == "" or selected_bacteria == "�
 # サイドバーで実施機関を選択
 institutions_filtered = [""] + ["すべて"] + list(df_filtered['実施機関'].unique())
 selected_institution = st.sidebar.selectbox(
-    '実施機関を入力 または 選択してください:',
+    '実施機関を入力/選択してください:',
     institutions_filtered,
     format_func=lambda x: "" if x == "" else x,
     key="institution_selected"
@@ -198,7 +198,7 @@ group_title = f"（{selected_group} - {selected_food} - {selected_bacteria} - {s
 
 # 表示条件を確認して出力制御
 if selected_group == "" and selected_food == "" and selected_bacteria == "" and selected_institution == "":
-    st.warning("入力または選択を行ってください。")
+    st.warning("検索メニューからカテゴリの入力または選択を行ってください。")
 
 # データがない場合は処理を中止して警告を表示
 elif df_filtered.empty:
