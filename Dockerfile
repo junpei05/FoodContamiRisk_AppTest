@@ -15,4 +15,4 @@ COPY . /app
 
 ENTRYPOINT ["streamlit", "run"]
 
-CMD ["risk_concentration_test_JH.py", "--server.port=8080"]
+CMD ["risk_concentration_test_JH.py", "risk_ratio_test_JH.py", "--server.port=8080"]
