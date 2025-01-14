@@ -13,6 +13,8 @@ EXPOSE 8080
 
 COPY . /app
 
+COPY .streamlit /app/.streamlit
+
 ENTRYPOINT ["streamlit", "run"]
 
 CMD ["risk_concentration_test_JH.py", "risk_ratio_test_JH.py", "--server.port=8080"]
